@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from cv2 import *
+import cv2
 import math
 import Image
 import numpy
@@ -9,15 +9,17 @@ import time
 import pdb
 from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
+from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
 class CWDetection:
 
-	def __init__ (self, constants=CWConstants()):
+	def __init__ (self, CWConstants=CWConstants()):
 		self.CWSerial = CWSerial()
 		self.CWSerial.StopFill()
 		self.CWSerial.StopRotation()
 
-		self.CWConstants = constants
+		self.CWConstants = CWConstants
+		self.CWCLIDrawer = CWCLIDrawer(self.CWConstants)
 
 		self.start_count = 0
 		self.stop_count = 0
@@ -28,7 +30,6 @@ class CWDetection:
 		self.white_pixel_in_percent = 0
 		self.full = False
 		self.empty = True
-
 		self.ready_to_fill = True
 
 		self.top = (0, self.CWConstants.h)
@@ -36,10 +37,10 @@ class CWDetection:
 		self.right = (self.CWConstants.middle_left_point,0)
 		self.bottom_beer = (0, self.CWConstants.h)
 		self.bottom_foam = (0, self.CWConstants.h)
+
 	
 	def LeftLine(self, lines):
 		self.left = (self.CWConstants.middle_left_point,0)
-		
 		for line in lines[0]:
 			if line[0] < self.CWConstants.middle_left_point:
 				#Es wird geschaut, ob die gefundene Linie
@@ -172,56 +173,6 @@ class CWDetection:
 				self.empty = True
 				self.stop_after_fill_count = 0
 
-	def IsInRange(self):
-		#return  self.left[0] != self.middle_right_point and self.right[0] != self.middle_left_point
-		return True
-		
-	def Draw(self):
-		pt1 = (self.CWConstants.left_border_ignor,0)
-		pt2 = (self.CWConstants.left_border_ignor,self.CWConstants.h)
-		cv2.line(self.img, pt1, pt2, (0, 64, 186), 3)		
-
-		pt1 = (self.CWConstants.right_border_ignor,0)
-		pt2 = (self.CWConstants.right_border_ignor,self.CWConstants.h)
-		cv2.line(self.img, pt1, pt2, (0, 64, 186), 3)	
-
-		pt1 = (self.CWConstants.middle_left_point,0)
-		pt2 = (self.CWConstants.middle_left_point,self.CWConstants.h)
-		cv2.line(self.img, pt1, pt2, (0, 64, 186), 3)		
-
-		pt1 = (self.CWConstants.middle_right_point,0)
-		pt2 = (self.CWConstants.middle_right_point,self.CWConstants.h)
-		cv2.line(self.img, pt1, pt2, (0, 64, 186), 3)	
-		
-		# Left line
-		pt1 = (self.left[0],0)
-		pt2 = (self.left[0],self.CWConstants.h)
-		if self.IsInRange():
-			cv2.line(self.img, pt1, pt2, (255,0,255), 3)
-	
-		# Right line
-		pt1 = (self.right[0],0)
-		pt2 = (self.right[0],self.CWConstants.h)
-		if self.IsInRange():
-		    	cv2.line(self.img, pt1, pt2, (0,0,255), 3)
-
-		# Top line
-		pt1 = (0,self.top[1])
-		pt2 = (self.CWConstants.w, self.top[1])
-		if self.IsInRange():		
-		    	cv2.line(self.img, pt1, pt2, (0,255,0), 3)
-			
-		"""# bottom_beer line
-		pt1 = (0,self.bottom_beer[1])
-	    	pt2 = (self.w, self.bottom_beer[1])
-		if self.IsInRange():
-			cv2.line(self.img, pt1, pt2, (0,255,255), 3)"""
-	
-		# bottom_foam line
-		pt1 = (self.left[0],self.bottom_foam[1])
-		pt2 = (self.right[0], self.bottom_foam[1])
-		if self.IsInRange() and self.bottom_foam[1] != self.CWConstants.h:
-			cv2.line(self.img, pt1, pt2, (255,0,0), 3)
 
 	def CannyThreshold(self, lowThreshold, ratio, kernel_size):
 		
@@ -245,6 +196,7 @@ class CWDetection:
 		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,   3,   0)
 		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
 
+		#Test-Ausgabe aller gefundenen Linien
 		for line in vertical_lines[0]:
 			pt1 = (line[0], line[1])
 			pt2 = (line[2], line[3])
@@ -266,7 +218,7 @@ class CWDetection:
 			print ("HitDetection fail")
 
 		try:
-			self.Draw()
+			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
 		except:
 			print ("Draw fail")
 		

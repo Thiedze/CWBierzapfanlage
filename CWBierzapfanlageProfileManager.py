@@ -46,22 +46,27 @@ class CWProfileManager:
 		self.CWConstants.changeRightBorderIgnorValue(self.configParser.getint(str(section), self.CWConstants.rightBorderIgnorString))
 		self.CWConstants.changeLeftBorderIgnorValue(self.configParser.getint(str(section), self.CWConstants.leftBorderIgnorString))
 
-	def saveSetting(self, section):
+	#Speichern eines "section" (Profiles)
+	def saveSection(self, section):
 		if not self.configParser.has_section(str(section)):
 			print ('New: ' + section)
-			#self.addNewSection(section)
+			#Oeffnen der Profile-Datei
 			cfgfile = open(self.CWConstants.configFilename,'w')
+			#Hinzufuegen einer neuen "section" (Profile)
 			self.configParser.add_section(str(section))
 			self.updateSection(str(section))
+			#Speichern des neuen Profiles in die Profile-Datei
 			self.configParser.write(cfgfile)
 			cfgfile.close()
 
+	#Loeschen einer "section" (Profiles)
 	def deleteSection(self, section):
 		cfgfile = open(self.CWConstants.configFilename,'w')
 		self.configParser.remove_section(str(section))
 		self.configParser.write(cfgfile)
 		cfgfile.close()
 
+	#Updaten einer bereits vorhandene "section" (Profiles)
 	def updateSection(self, section):
 		print ("Update: " + section)
 		self.configParser.set(str(section), self.CWConstants.middleRightPointString, self.CWConstants.middle_right_point)
