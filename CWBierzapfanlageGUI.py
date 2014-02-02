@@ -61,7 +61,7 @@ class TextField(QtGui.QWidget):
 
 class Label(QtGui.QWidget):
 	def __init__(self,parent=None,title="New Label",x=0,y=0,w=60,h=30):
-		#self.parent = parent
+		self.parent = parent
 		QtGui.QWidget.__init__(self, parent)
 		self.label = QtGui.QLabel(title,parent)
 		self.label.setGeometry(x,y,w,h)
