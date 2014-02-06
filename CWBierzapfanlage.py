@@ -23,7 +23,6 @@ CWConfigWindow(CWConstants, CWProfileManager)
 CWDetection = CWDetection(CWConstants)
 CWDetection.run()
 
-
 sys.exit(app.exec_())
 
 
