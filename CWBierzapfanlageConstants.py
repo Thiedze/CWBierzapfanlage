@@ -16,6 +16,7 @@ class CWConstants:
 		self.h = 480
 		self.total_number_of_pixel = self.h * self.w
 		self.configFilename = "CWBierzapfanlage.cfg"
+		self.stopProgram = False
 		
 		self.middleRightPointString = 'Middle Right Point'
 		self.middleLeftPointString = 'Middle Left Point'

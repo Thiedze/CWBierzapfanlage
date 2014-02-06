@@ -14,13 +14,13 @@ app = QtGui.QApplication(sys.argv)
 CWConstants = CWConstants()
 
 #Init des Profile Managers (Erstellen/Aendern/Loeschen/Speichern von Profilen)
-CWProfileManager = CWProfileManager()
+CWProfileManager = CWProfileManager(CWConstants)
 
 #Init des ConfigWindows (Einstellen/Aendern und Speichern von Configs)
-CWConfigWindow(CWConstants = CWConstants, CWProfileManager = CWProfileManager)
+CWConfigWindow(CWConstants, CWProfileManager)
 
 #Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
-CWDetection = CWDetection(CWConstants = CWConstants)
+CWDetection = CWDetection(CWConstants)
 CWDetection.run()
 
 sys.exit(app.exec_())

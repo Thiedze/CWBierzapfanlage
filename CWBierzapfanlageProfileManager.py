@@ -11,13 +11,13 @@ import ConfigParser
 from CWBierzapfanlageConstants import CWConstants
 
 class CWProfileManager:
-	def __init__(self, CWConstants=CWConstants()):
+	def __init__(self, CWConstants):
 		self.CWConstants = CWConstants
 		self.configParser = ConfigParser.ConfigParser()
 		self.configParser.read(self.CWConstants.configFilename)
 
 	def changeMiddleRightPointValue(self, value):
-		self.CWConstants.middle_right_point = int(value)
+		print self.CWConstants.middle_right_point
 
 	def changeMiddleLeftPointValue(self, value):
 		self.CWConstants.middle_left_point = int(value)
@@ -61,6 +61,7 @@ class CWProfileManager:
 
 	#Loeschen einer "section" (Profiles)
 	def deleteSection(self, section):
+		print ("Delete: " + section)
 		cfgfile = open(self.CWConstants.configFilename,'w')
 		self.configParser.remove_section(str(section))
 		self.configParser.write(cfgfile)

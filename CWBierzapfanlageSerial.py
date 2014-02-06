@@ -24,7 +24,6 @@ class CWSerial:
 
 	def StartRotation(self, secs):
 		try:
-			#print ("Start Rotation")
 			self.StopFill()
 			time.sleep(secs)
 			self.ser.setRTS(level=True)
@@ -40,7 +39,6 @@ class CWSerial:
 
 	def StartFill(self):
 		try:
-			#print ("Start Fill")
 			self.StopRotation()
 			#time.sleep(0.10)
 			self.ser.setDTR(level=True)
@@ -49,7 +47,6 @@ class CWSerial:
 
 	def StopFill(self):
 		try:
-			#print ("Stop Fill")
 			self.ser.setDTR(level=False)
 		except:
 			print "StopFill fail"

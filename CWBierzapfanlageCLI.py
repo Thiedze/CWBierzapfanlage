@@ -13,7 +13,7 @@ from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
 class CWDetection:
 
-	def __init__ (self, CWConstants=CWConstants()):
+	def __init__ (self, CWConstants):
 		self.CWSerial = CWSerial()
 		self.CWSerial.StopFill()
 		self.CWSerial.StopRotation()
@@ -200,7 +200,7 @@ class CWDetection:
 		for line in vertical_lines[0]:
 			pt1 = (line[0], line[1])
 			pt2 = (line[2], line[3])
-			cv2.line(self.img, pt1, pt2, (0,0,255), 3)
+			#cv2.line(self.img, pt1, pt2, (0,0,255), 3)
 			
 		try:
 			self.LeftLine(vertical_lines)
@@ -221,7 +221,6 @@ class CWDetection:
 			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
 		except:
 			print ("Draw fail")
-		
 	
 		cv2.imshow("Original", self.img)
 
@@ -240,7 +239,8 @@ class CWDetection:
 		
 			# Listen for ESC key
 			c = cv2.waitKey(7) % 0x100
-			if c == 27:
+			#if c == 27:
+			if self.CWConstants.stopProgram == True:
 				self.CWSerial.Close()
 				break
 

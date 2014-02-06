@@ -67,7 +67,7 @@ class Label(QtGui.QWidget):
 		self.label.setGeometry(x,y,w,h)
 
 class CWConfigWindow(QtGui.QWidget):
-	def __init__(self,CWConstants=CWConstants(), CWProfileManager=CWProfileManager(),parent=None,w=400,h=600):
+	def __init__(self,CWConstants, CWProfileManager,parent=None,w=400,h=600):
 		self.CWConstants = CWConstants
 		self.CWProfileManager = CWProfileManager
 		self.w=w
@@ -87,6 +87,8 @@ class CWConfigWindow(QtGui.QWidget):
 		
 		#Close Button
 		Button(parent=self,callback=QtCore.SLOT('quit()'), text="Close",x=10,y=(self.h-40))
+
+		Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
 
 		#Save Button
 		Button(parent=self,callback=self.saveSetting,text="Save",x=(self.w-140),y=(self.h-40))
@@ -146,4 +148,7 @@ class CWConfigWindow(QtGui.QWidget):
 			self.combo.catchConfigs()
 			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
 			self.changeSetting()
+
+	def stopScanning(self):
+		self.CWConstants.stopProgram = True
 
