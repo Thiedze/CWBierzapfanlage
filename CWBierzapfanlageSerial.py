@@ -6,6 +6,9 @@ Campuswoche 2014
 
 Serielle-Kommunikation zum steuern der Bierzapfanlage.
 """
+
+DEBUG = False
+
 import serial
 class CWSerial:
 	def __init__(self):
@@ -20,7 +23,8 @@ class CWSerial:
 			if self.ser.isOpen() != True:
 					self.ser.open()
 		except:
-			print "Can't open serial port!"
+			if DEBUG == True:
+				print "Can't open serial port!"
 
 	def StartRotation(self, secs):
 		try:
@@ -28,14 +32,16 @@ class CWSerial:
 			time.sleep(secs)
 			self.ser.setRTS(level=True)
 		except:
-			print "StartRotation fail"
+			if DEBUG == True:
+				print "StartRotation fail"
 
 	def StopRotation(self):
 		try:
 			#print ("Stop Rotation")
 			self.ser.setRTS(level=False)
 		except:
-			print "StopRotation fail"
+			if DEBUG == True:
+				print "StopRotation fail"
 
 	def StartFill(self):
 		try:
@@ -43,17 +49,21 @@ class CWSerial:
 			#time.sleep(0.10)
 			self.ser.setDTR(level=True)
 		except:
-			print "StartFill fail"
+			if DEBUG == True:
+				print "StartFill fail"
 
 	def StopFill(self):
 		try:
 			self.ser.setDTR(level=False)
 		except:
-			print "StopFill fail"
+			if DEBUG == True:
+				print "StopFill fail"
 
 	def Close(self):
 		try:
 			if self.ser.isOpen() != True:
 				self.ser.close()
 		except:
-			print "Close serial fail"
+			if DEBUG == True:
+				print "Close serial fail"
+

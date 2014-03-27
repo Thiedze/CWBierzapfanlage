@@ -11,6 +11,8 @@ from PyQt4 import QtCore
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageProfileManager import CWProfileManager
 
+DEBUG = True
+
 class Button(QtGui.QWidget):
 	def __init__(self,parent=None,callback=None,text="New Button",x=0,y=0,w=60,h=30):
 		QtGui.QWidget.__init__(self, parent)
@@ -90,6 +92,9 @@ class CWConfigWindow(QtGui.QWidget):
 
 		Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
 
+		#Detect Button
+		Button(parent=self,callback=self.detectingSetting,text="Detect",x=(self.w-210),y=(self.h-40))
+
 		#Save Button
 		Button(parent=self,callback=self.saveSetting,text="Save",x=(self.w-140),y=(self.h-40))
 
@@ -121,15 +126,16 @@ class CWConfigWindow(QtGui.QWidget):
 	#Alle neuen Slider muessen hier hinzugefuegt werden
 	def changeSetting(self):
 		if(self.combo.combo.currentText().size() > 0):
+			if DEBUG == True:
+				print ("GUI Change Setting")
 			section = str(self.combo.combo.currentText())
-			print ("Setting: " + section)
-			self.middleRightPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.middleRightPointSlider.text), True)))
-			self.middleLeftPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.middleLeftPointSlider.text),True)))
-			self.distanceTopToBottomLineSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.distanceTopToBottomLineSlider.text),True)))
-			self.borderGlasDistanceDivSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.borderGlasDistanceDivSlider.text),True)))
-			self.borderGlasDistanceSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.borderGlasDistanceSlider.text),True)))
-			self.rightBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.rightBorderIgnorSlider.text),True)))
-			self.leftBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.leftBorderIgnorSlider.text),True)))
+			self.middleRightPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleRightPointString), True)))
+			self.middleLeftPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleLeftPointString),True)))
+			self.distanceTopToBottomLineSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.distanceTopToBottomLineString),True)))
+			self.borderGlasDistanceDivSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceDivString),True)))
+			self.borderGlasDistanceSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceString),True)))
+			self.rightBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.rightBorderIgnorString),True)))
+			self.leftBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.leftBorderIgnorString),True)))
 				
 	#Loeschen eines Setting (Profiles)
 	def deleteSetting(self):
@@ -141,9 +147,13 @@ class CWConfigWindow(QtGui.QWidget):
 	#Speichern eines Setting (Profiles)
 	def saveSetting(self):
 		if self.textField.textField.text().size() == 0:
+			if DEBUG == True:
+				print ("GUI Update Section: " + self.combo.combo.currentText())
 			self.CWProfileManager.updateSection(self.combo.combo.currentText())
 		else:
 			section = self.textField.textField.text()
+			if DEBUG == True:
+				print ("GUI Save New Section: " + section)
 			self.CWProfileManager.saveSection(section)
 			self.combo.catchConfigs()
 			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
@@ -151,4 +161,7 @@ class CWConfigWindow(QtGui.QWidget):
 
 	def stopScanning(self):
 		self.CWConstants.stopProgram = True
+
+	def detectingSetting(self):
+		print ("GUI Detecting Setting")
 

@@ -185,12 +185,13 @@ class CWDetection:
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
 		
+		cv2.imshow("Test", self.gray_vertical)
+
 		detected_edges_vertical = cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		detected_edges_horizontal = cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		
 		#cv2.imshow("Gray Vertical", detected_edges_vertical)
 		#cv2.imshow("Gray Horizontal", detected_edges_horizontal)
-
 
 		#					image		     rho  theta      thres  lines  lenght   stn
 		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,   3,   0)
