@@ -7,7 +7,7 @@ Campuswoche 2014
 Serielle-Kommunikation zum steuern der Bierzapfanlage.
 """
 
-DEBUG = True
+DEBUG = False
 
 import serial
 class CWSerial:
