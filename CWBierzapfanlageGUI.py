@@ -69,9 +69,10 @@ class Label(QtGui.QWidget):
 		self.label.setGeometry(x,y,w,h)
 
 class CWConfigWindow(QtGui.QWidget):
-	def __init__(self,CWConstants, CWProfileManager,parent=None,w=400,h=600):
+	def __init__(self,CWConstants, CWProfileManager, CWDetection, parent=None,w=400,h=590):
 		self.CWConstants = CWConstants
 		self.CWProfileManager = CWProfileManager
+		self.CWDetection = CWDetection
 		self.w=w
 		self.h=h
 		QtGui.QWidget.__init__(self, parent)
@@ -81,6 +82,19 @@ class CWConfigWindow(QtGui.QWidget):
 		self.show()
 
 	def createAndAddGUIElements(self):
+
+		#Debug Start Rotate
+		Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
+
+		#Debug Stop Rotate
+		Button(parent=self, callback=self.stopRotate, text="Stop Rotate", x=100, y=(self.h-620), w=80)
+
+		#Debug Start Fill
+		Button(parent=self, callback=self.startFill, text="Start Fill", x=190, y=(self.h-620), w=80)
+
+		#Debug Stop Fill
+		Button(parent=self, callback=self.stopFill, text="Stop Fill", x=280, y=(self.h-620), w=80)
+
 		#Saved Settings ComboBox
 		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-580),w=(self.w-150))
 		
@@ -164,4 +178,16 @@ class CWConfigWindow(QtGui.QWidget):
 
 	def detectingSetting(self):
 		print ("GUI Detecting Setting")
+
+	def startRotate(self):
+		self.CWDetection.CWSerial.StartRotation(0.0)
+
+	def stopRotate(self):
+		self.CWDetection.CWSerial.StopRotation()
+
+	def stopFill(self):
+		self.CWDetection.CWSerial.StopFill()
+		
+	def startFill(self):
+		self.CWDetection.CWSerial.StartFill()
 

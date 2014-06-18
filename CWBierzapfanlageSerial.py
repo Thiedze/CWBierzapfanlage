@@ -7,7 +7,7 @@ Campuswoche 2014
 Serielle-Kommunikation zum steuern der Bierzapfanlage.
 """
 
-DEBUG = False
+DEBUG = True
 
 import serial
 class CWSerial:
@@ -29,7 +29,7 @@ class CWSerial:
 	def StartRotation(self, secs):
 		try:
 			self.StopFill()
-			time.sleep(secs)
+			#time.sleep(0.5)
 			self.ser.setRTS(level=True)
 		except:
 			if DEBUG == True:
@@ -37,7 +37,9 @@ class CWSerial:
 
 	def StopRotation(self):
 		try:
-			#print ("Stop Rotation")
+			if DEBUG == True:
+				print ("Stop Rotation")
+
 			self.ser.setRTS(level=False)
 		except:
 			if DEBUG == True:
