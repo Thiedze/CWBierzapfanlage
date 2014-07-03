@@ -9,6 +9,8 @@ Dient zum Zeichnen der Hilflinien.
 
 import cv2
 
+DEBUG = False
+
 class CWCLIDrawer:
 	def __init__(self, CWConstants):
 		self.CWConstants = CWConstants

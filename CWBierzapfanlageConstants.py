@@ -9,6 +9,8 @@ Konstanten der Bierzapfanlage.
 
 import os.path
 
+DEBUG = False
+
 class CWConstants:
 	def __init__(self):		
 		#Groesse des Bildes

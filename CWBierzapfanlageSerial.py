@@ -22,6 +22,7 @@ class CWSerial:
 			
 			if self.ser.isOpen() != True:
 					self.ser.open()
+
 		except:
 			if DEBUG == True:
 				print "Can't open serial port!"
@@ -37,9 +38,6 @@ class CWSerial:
 
 	def StopRotation(self):
 		try:
-			if DEBUG == True:
-				print ("Stop Rotation")
-
 			self.ser.setRTS(level=False)
 		except:
 			if DEBUG == True:

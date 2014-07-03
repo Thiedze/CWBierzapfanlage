@@ -6,12 +6,15 @@ Sebastian Thiems 2014
 GUI fuer die Automatische-Bierzapfanlage
 """
 
+import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageProfileManager import CWProfileManager
 
-DEBUG = True
+DEBUG = False
 
 class Button(QtGui.QWidget):
 	def __init__(self,parent=None,callback=None,text="New Button",x=0,y=0,w=60,h=30):
@@ -68,32 +71,45 @@ class Label(QtGui.QWidget):
 		self.label = QtGui.QLabel(title,parent)
 		self.label.setGeometry(x,y,w,h)
 
+class StatusField(QtGui.QWidget):
+	def __init__(self,parent=None, x=0,y=0,w=100,h=30):
+		self.parent = parent
+		QtGui.QWidget.__init__(self, parent)
+		self.status = QtGui.QWidget(parent)
+		
+		#self.color = QtGui.QColor(255, 0, 0)
+		self.status.setGeometry(x,y,w,h)
+		self.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name() )
+
+
 class CWConfigWindow(QtGui.QWidget):
-	def __init__(self,CWConstants, CWProfileManager, CWDetection, parent=None,w=400,h=590):
+	def __init__(self,CWConstants, CWProfileManager, parent=None,w=400,h=590):
 		self.CWConstants = CWConstants
 		self.CWProfileManager = CWProfileManager
-		self.CWDetection = CWDetection
 		self.w=w
 		self.h=h
 		QtGui.QWidget.__init__(self, parent)
 		self.resize(self.w,self.h)
 		self.setWindowTitle('Automatische Bierzapfanlage')
-		self.createAndAddGUIElements()
+		self.setWindowIcon(QtGui.QIcon('campus.png'))		
+		self.createAndAddGUIElements()		
 		self.show()
-
+		
 	def createAndAddGUIElements(self):
 
+		self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
+
 		#Debug Start Rotate
-		Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
+		#Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
 
 		#Debug Stop Rotate
-		Button(parent=self, callback=self.stopRotate, text="Stop Rotate", x=100, y=(self.h-620), w=80)
+		#Button(parent=self, callback=self.stopRotate, text="Stop Rotate", x=100, y=(self.h-620), w=80)
 
 		#Debug Start Fill
-		Button(parent=self, callback=self.startFill, text="Start Fill", x=190, y=(self.h-620), w=80)
+		#Button(parent=self, callback=self.startFill, text="Start Fill", x=190, y=(self.h-620), w=80)
 
 		#Debug Stop Fill
-		Button(parent=self, callback=self.stopFill, text="Stop Fill", x=280, y=(self.h-620), w=80)
+		#Button(parent=self, callback=self.stopFill, text="Stop Fill", x=280, y=(self.h-620), w=80)
 
 		#Saved Settings ComboBox
 		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-580),w=(self.w-150))
@@ -102,9 +118,9 @@ class CWConfigWindow(QtGui.QWidget):
 		self.textField = TextField(parent=self,  x=(self.w/2+60),y=(self.h-580),w=130)
 		
 		#Close Button
-		Button(parent=self,callback=QtCore.SLOT('quit()'), text="Close",x=10,y=(self.h-40))
+		Button(parent=self,callback=self.quit, text="Quit",x=10,y=(self.h-40))
 
-		Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
+		#Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
 
 		#Detect Button
 		Button(parent=self,callback=self.detectingSetting,text="Detect",x=(self.w-210),y=(self.h-40))
@@ -176,18 +192,29 @@ class CWConfigWindow(QtGui.QWidget):
 	def stopScanning(self):
 		self.CWConstants.stopProgram = True
 
+	def quit(self):
+		sys.exit(0)		
+
 	def detectingSetting(self):
 		print ("GUI Detecting Setting")
 
-	def startRotate(self):
-		self.CWDetection.CWSerial.StartRotation(0.0)
+	def glasDetected(self, detected = False):
+		if DEBUG == True:
+			print detected
+		if detected == True:
+			self.statusField.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(0, 255, 0).name())
+		else:
+			self.statusField.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name())
 
-	def stopRotate(self):
-		self.CWDetection.CWSerial.StopRotation()
+	#def startRotate(self):
+	#	self.CWDetection.CWSerial.StartRotation(0.0)
 
-	def stopFill(self):
-		self.CWDetection.CWSerial.StopFill()
+	#def stopRotate(self):
+	#	self.CWDetection.CWSerial.StopRotation()
+
+	#def stopFill(self):
+	#	self.CWDetection.CWSerial.StopFill()
 		
-	def startFill(self):
-		self.CWDetection.CWSerial.StartFill()
+	#def startFill(self):
+	#	self.CWDetection.CWSerial.StartFill()
 

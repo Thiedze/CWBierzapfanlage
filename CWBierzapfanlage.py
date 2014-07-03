@@ -1,4 +1,4 @@
-#!/usr/bin/pyhton
+#!/usr/bin/python
 
 import sys
 from PyQt4 import QtGui
@@ -8,6 +8,8 @@ from CWBierzapfanlageCLI import CWDetection
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageProfileManager import CWProfileManager
 
+DEBUG = False
+
 app = QtGui.QApplication(sys.argv)
 
 #Init der Konstanten (Schnittstelle zwischen GUI und CLI)
@@ -16,11 +18,11 @@ CWConstants = CWConstants()
 #Init des Profile Managers (Erstellen/Aendern/Loeschen/Speichern von Profilen)
 CWProfileManager = CWProfileManager(CWConstants)
 
-#Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
-CWDetection = CWDetection(CWConstants)
-
 #Init des ConfigWindows (Einstellen/Aendern und Speichern von Configs)
-CWConfigWindow(CWConstants, CWProfileManager, CWDetection)
+CWConfigWindow = CWConfigWindow(CWConstants, CWProfileManager)
+
+#Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
+CWDetection = CWDetection(CWConstants, CWConfigWindow)
 
 CWDetection.run()
 

@@ -11,7 +11,7 @@ import ConfigParser
 import os
 from CWBierzapfanlageConstants import CWConstants
 
-DEBUG = True
+DEBUG = False
 
 class CWProfileManager:
 	def __init__(self, CWConstants):

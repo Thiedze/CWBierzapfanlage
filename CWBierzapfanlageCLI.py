@@ -11,9 +11,12 @@ from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
+DEBUG = False
+
 class CWDetection:
 
-	def __init__ (self, CWConstants):
+	def __init__ (self, CWConstants, CWConfigWindow):
+		self.CWConfigWindow = CWConfigWindow
 		self.CWSerial = CWSerial()
 		self.CWSerial.StopFill()
 		self.CWSerial.StopRotation()
@@ -131,7 +134,9 @@ class CWDetection:
 		#Linke und rechte Linie muessen erkannt worden sein
 		if self.left[0] != self.CWConstants.middle_left_point and self.right[0] != self.CWConstants.middle_right_point and self.left[0] != self.CWConstants.left_border_ignor and self.right[0] != self.CWConstants.right_border_ignor:
 			
-			#print ("=================RechteOderLinkeSeiteErkannt")			
+			if DEBUG == True:
+				print ("=================RechteOderLinkeSeiteErkannt")			
+
 			self.CWSerial.StopRotation()	
 			self.stop_after_fill = False
 			self.empty = True
@@ -149,6 +154,7 @@ class CWDetection:
 				self.start_count = self.start_count + 1
 
 				if self.stop_after_fill == False and self.start_count == x * 3 and self.empty == True:
+					self.CWConfigWindow.glasDetected(True)
 					self.CWSerial.StartFill()
 					self.start_count = 0
 					self.stop_count = 0
@@ -156,15 +162,18 @@ class CWDetection:
 		else:
 			self.rotat_count = self.rotat_count + 1
 			if self.rotat_count == x * 2:
+				self.CWConfigWindow.glasDetected(False)
 				self.rotat_count = 0
-				#print ("=================KeineRechteOderLinkeSeiteErkannt")
+				if DEBUG == True:
+					print ("=================KeineRechteOderLinkeSeiteErkannt")
 				self.CWSerial.StartRotation(0.0)
 				self.top = (0, self.CWConstants.h)
 				
 					
 
 		if self.stop_after_fill == True:
-			#print ("=================StopAfterFill")
+			if DEBUG == True:
+				print ("=================StopAfterFill")
 			self.CWSerial.StartRotation(0.0)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
@@ -185,13 +194,16 @@ class CWDetection:
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
 		
-		cv2.imshow("Test", self.gray_vertical)
+		if DEBUG == True:
+			cv2.imshow("Test", self.gray_vertical)
 
 		detected_edges_vertical = cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		detected_edges_horizontal = cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
-		
-		#cv2.imshow("Gray Vertical", detected_edges_vertical)
-		#cv2.imshow("Gray Horizontal", detected_edges_horizontal)
+		if DEBUG == True:
+			cv2.imshow("Gray Vertical", detected_edges_vertical)
+
+		if DEBUG == True:
+			cv2.imshow("Gray Horizontal", detected_edges_horizontal)
 
 		#					image		     rho  theta      thres  lines  lenght   stn
 		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,   3,   0)
@@ -211,19 +223,24 @@ class CWDetection:
 			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
 			
 		except TypeError:
-			print ("LineSearching fail")
+			if DEBUG == True:
+				print ("LineSearching fail")
 
 		try:
 			self.HitDetection()
 		except:
-			print ("HitDetection fail")
+			if DEBUG == True:
+				print ("HitDetection fail")
 
 		try:
 			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
 		except:
-			print ("Draw fail")
-	
-		cv2.imshow("Original", self.img)
+			if DEBUG == True:			
+				print ("Draw fail")
+			
+
+		if DEBUG == True:
+			cv2.imshow("Original", self.img)
 
 
 	def run(self):
@@ -233,10 +250,12 @@ class CWDetection:
 				ret, self.img = capture.read()
 				self.CannyThreshold(50, 3, 3)
 			except TypeError:
-				print ("You have no \"glas\"")
+				if DEBUG == True:
+					print ("You have no \"glas\"")
 				self.CWSerial.StartRotation(0)
 			except:
-				print ("No Cam")
+				if DEBUG == True:
+					print ("No Cam")
 		
 			# Listen for ESC key
 			c = cv2.waitKey(7) % 0x100
