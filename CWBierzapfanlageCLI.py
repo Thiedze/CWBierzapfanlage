@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from sys import argv
+
 import cv2
 import math
 import Image
@@ -7,11 +9,14 @@ import numpy
 import sys
 import time
 import pdb
+import zbar
+import subprocess
+from thread import start_new_thread
 from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-DEBUG = False
+DEBUG = True
 
 class CWDetection:
 
@@ -135,7 +140,7 @@ class CWDetection:
 		if self.left[0] != self.CWConstants.middle_left_point and self.right[0] != self.CWConstants.middle_right_point and self.left[0] != self.CWConstants.left_border_ignor and self.right[0] != self.CWConstants.right_border_ignor:
 			
 			if DEBUG == True:
-				print ("=================RechteOderLinkeSeiteErkannt")			
+				print ("=================Found side")			
 
 			self.CWSerial.StopRotation()	
 			self.stop_after_fill = False
@@ -165,7 +170,7 @@ class CWDetection:
 				self.CWConfigWindow.glasDetected(False)
 				self.rotat_count = 0
 				if DEBUG == True:
-					print ("=================KeineRechteOderLinkeSeiteErkannt")
+					print ("=================Found no side")
 				self.CWSerial.StartRotation(0.0)
 				self.top = (0, self.CWConstants.h)
 				
@@ -173,7 +178,7 @@ class CWDetection:
 
 		if self.stop_after_fill == True:
 			if DEBUG == True:
-				print ("=================StopAfterFill")
+				print ("=================Stop after fill")
 			self.CWSerial.StartRotation(0.0)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
@@ -183,7 +188,7 @@ class CWDetection:
 				self.stop_after_fill_count = 0
 
 
-	def CannyThreshold(self, lowThreshold, ratio, kernel_size):
+	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):
 		
 		self.gray = cv2.cvtColor(self.img ,cv2.COLOR_BGR2GRAY)
 		self.gray_only = self.gray
@@ -193,16 +198,12 @@ class CWDetection:
 		self.gray_vertical = cv2.erode(self.gray, kernel)
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
-		
-		if DEBUG == True:
-			cv2.imshow("Test", self.gray_vertical)
 
 		detected_edges_vertical = cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		detected_edges_horizontal = cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
-		if DEBUG == True:
-			cv2.imshow("Gray Vertical", detected_edges_vertical)
 
 		if DEBUG == True:
+			cv2.imshow("Gray Vertical", detected_edges_vertical)
 			cv2.imshow("Gray Horizontal", detected_edges_horizontal)
 
 		#					image		     rho  theta      thres  lines  lenght   stn
@@ -210,10 +211,11 @@ class CWDetection:
 		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
 
 		#Test-Ausgabe aller gefundenen Linien
-		for line in vertical_lines[0]:
-			pt1 = (line[0], line[1])
-			pt2 = (line[2], line[3])
-			#cv2.line(self.img, pt1, pt2, (0,0,255), 3)
+		if DEBUG == True:
+			for line in vertical_lines[0]:
+				pt1 = (line[0], line[1])
+				pt2 = (line[2], line[3])
+				cv2.line(self.img, pt1, pt2, (0,0,255), 3)
 			
 		try:
 			self.LeftLine(vertical_lines)
@@ -241,21 +243,50 @@ class CWDetection:
 
 		if DEBUG == True:
 			cv2.imshow("Original", self.img)
-
+	
+	def extractBarcode(self):
+		try:
+			if DEBUG == True:
+				cv2.imshow("Barcode Image", self.img)			
+			scanner = zbar.ImageScanner()
+			scanner.parse_config('enable')
+			barcodeImage = Image.fromarray(self.img).convert('L')
+			width, height = barcodeImage.size
+			raw = barcodeImage.tostring()
+			barcodeScanned = zbar.Image(width, height, 'Y800', raw)
+			scanner.scan(barcodeScanned)
+		
+			for symbol in barcodeScanned:
+				if symbol.data == '1234567890128':
+					print 'Hit' + now()
+		except:
+			if DEBUG == True:
+				print 'Barcode scanner error: ', sys.exc_info()[0]
+			
 
 	def run(self):
 		capture = cv2.VideoCapture(0)
 		while True:
-			try:
+			try:	
 				ret, self.img = capture.read()
-				self.CannyThreshold(50, 3, 3)
+				#self.extractBarcode()				
+				self.edgeDetection()
+	
 			except TypeError:
 				if DEBUG == True:
-					print ("You have no \"glas\"")
+					print ("You have no \"glass\"")
 				self.CWSerial.StartRotation(0)
+
 			except:
+				capture = cv2.VideoCapture(0)
 				if DEBUG == True:
-					print ("No Cam")
+					print ("No Cam: ", sys.exc_info()[0])
+
+				#self.CWSerial.Close()
+				#print 'Start script'
+				#start_new_thread(subprocess.call(['./CWBierzapfanlage.py']))
+				#print 'Kill myself'
+				#sys.exit(0)				
 		
 			# Listen for ESC key
 			c = cv2.waitKey(7) % 0x100
