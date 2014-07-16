@@ -11,7 +11,7 @@ from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-DEBUG = False
+DEBUG = True
 
 class CWDetection:
 
@@ -47,7 +47,7 @@ class CWDetection:
 		for line in lines[0]:
 			if line[0] < self.CWConstants.middle_left_point:
 				#Es wird geschaut, ob die gefundene Linie
-				#weiter links liegt als die aktuelle :and: horizontal ist :and: nicht im ignoriertem Bereich liegt
+				#weiter links liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
 				if line[0] < self.left[0] and line[0] == line[2] and line[0] > self.CWConstants.left_border_ignor:
 					self.left = (line[0], line[1])
 					continue
@@ -55,21 +55,21 @@ class CWDetection:
 	def RightLine(self, lines):
 		self.right = (self.CWConstants.middle_right_point,0)
 		for line in lines[0]:
-			length = math.sqrt((line[0]-line[2])**2+(line[1]-line[3])**2)
+			#length = math.sqrt((line[0]-line[2])**2+(line[1]-line[3])**2)
 			if line[0] > self.CWConstants.middle_right_point:
 				#Es wird geschaut, ob die gefundene Linie
-				#weiter rechts liegt als die aktuelle :and: horizontal ist :and: nicht im ignoriertem Bereich liegt
-				if line[0] > self.right[0] and line[0] == line[2] and line[0] < self.CWConstants.right_border_ignor and length > 10:
+				#weiter rechts liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
+				if line[0] > self.right[0] and line[0] == line[2] and line[0] < self.CWConstants.right_border_ignor:
 					#Passt die Distanze
-					if line[0] - self.left[0] >= self.CWConstants.border_glas_distance - self.CWConstants.border_glas_distance_div:
-						if line[0] - self.left[0] <= self.CWConstants.border_glas_distance + self.CWConstants.border_glas_distance_div:
-							self.right = (line[0], line[1])
-							continue
+					#if line[0] - self.left[0] >= self.CWConstants.border_glas_distance - self.CWConstants.border_glas_distance_div:
+						#if line[0] - self.left[0] <= self.CWConstants.border_glas_distance + self.CWConstants.border_glas_distance_div:
+					self.right = (line[0], line[1])
+					continue
 
 	def TopLine(self, lines):
 		for line in lines[0]:
 			#Es wird geschaut, ob die gefundene Linie
-			#weiter oben liegt als die aktuelle :and: wagerecht ist :and: noch nicht gesetzt wurde		
+			#weiter oben liegt als die aktuelle :and: wagerecht ist :and: noch nicht initialisiert wurde		
 			if line[1] < self.top[1] and line[1] == line[3] and self.top[1] == self.CWConstants.h:
 				self.top = (line[0], line[1])
 			continue
@@ -182,9 +182,7 @@ class CWDetection:
 				self.empty = True
 				self.stop_after_fill_count = 0
 
-
-	def CannyThreshold(self, lowThreshold, ratio, kernel_size):
-		
+	def CannyThreshold(self, lowThreshold, ratio, kernel_size):		
 		self.gray = cv2.cvtColor(self.img ,cv2.COLOR_BGR2GRAY)
 		self.gray_only = self.gray
 		self.gray = cv2.adaptiveThreshold(self.gray,255,0,1,15,2)
@@ -193,27 +191,22 @@ class CWDetection:
 		self.gray_vertical = cv2.erode(self.gray, kernel)
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
-		
-		if DEBUG == True:
-			cv2.imshow("Test", self.gray_vertical)
 
 		detected_edges_vertical = cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		detected_edges_horizontal = cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 		if DEBUG == True:
 			cv2.imshow("Gray Vertical", detected_edges_vertical)
-
-		if DEBUG == True:
-			cv2.imshow("Gray Horizontal", detected_edges_horizontal)
+			cv2.imshow("Gray Horizontal", detected_edges_horizontal)			
 
 		#					image		     rho  theta      thres  lines  lenght   stn
-		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,   3,   0)
+		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,  10,   0)
 		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
 
 		#Test-Ausgabe aller gefundenen Linien
 		for line in vertical_lines[0]:
 			pt1 = (line[0], line[1])
 			pt2 = (line[2], line[3])
-			#cv2.line(self.img, pt1, pt2, (0,0,255), 3)
+			cv2.line(self.img, pt1, pt2, (0,0,255), 3)
 			
 		try:
 			self.LeftLine(vertical_lines)
@@ -242,13 +235,26 @@ class CWDetection:
 		if DEBUG == True:
 			cv2.imshow("Original", self.img)
 
+	def rotateImage(self):
+		try:
+			rows, cols, depth = self.img.shape
+			M = cv2.getRotationMatrix2D((cols/2,rows/2),90,1)
+			self.img = cv2.warpAffine(self.img, M ,(cols,rows))
+		except:
+			if DEBUG == True:
+				print ("Rotate failed: ", sys.exc_info())
 
 	def run(self):
 		capture = cv2.VideoCapture(0)
 		while True:
 			try:
 				ret, self.img = capture.read()
-				self.CannyThreshold(50, 3, 3)
+				if ret == True:
+					#cv2.imshow("Hi", self.img)					
+					self.rotateImage()
+					#y: y + h, x: x + w	
+					self.img = self.img[self.CWConstants.y: self.CWConstants.y + self.CWConstants.h, self.CWConstants.x: self.CWConstants.x + self.CWConstants.w]		
+					self.CannyThreshold(50, 3, 3)
 			except TypeError:
 				if DEBUG == True:
 					print ("You have no \"glas\"")
@@ -262,5 +268,15 @@ class CWDetection:
 			#if c == 27:
 			if self.CWConstants.stopProgram == True:
 				self.CWSerial.Close()
+				capture.release()
 				break
+
+
+
+
+
+
+
+
+
 
