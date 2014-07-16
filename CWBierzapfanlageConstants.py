@@ -14,19 +14,24 @@ DEBUG = False
 class CWConstants:
 	def __init__(self):		
 		#Groesse des Bildes
-		self.w = 640
-		self.h = 480
+		self.w = 380
+		self.h = 300
+		self.x = 140
+		self.y = 100
+
+		#self.img = self.img[100:400, 140:520]
+
 		self.total_number_of_pixel = self.h * self.w
 		self.configFilename = "CWBierzapfanlage.cfg"
 		self.stopProgram = False
-		
+
 		self.middleRightPointString = 'Middle Right Point'
 		self.middleLeftPointString = 'Middle Left Point'
 		self.distanceTopToBottomLineString = 'Distance Top To Bottom Line'
-		self.borderGlasDistanceDivString = 'Border Glas Distance Div'
-		self.borderGlasDistanceString = 'Border Glas Distance'
-		self.rightBorderIgnorString = 'Right Border Ignor'
-		self.leftBorderIgnorString = 'Left Border Ignor'
+		self.borderGlasDistanceDivString = 'Border Glass Distance Div'
+		self.borderGlasDistanceString = 'Border Glass Distance'
+		self.rightBorderIgnorString = 'Right Border Ignore'
+		self.leftBorderIgnorString = 'Left Border Ignore'
 
 		self.initBorderConstants()
 
