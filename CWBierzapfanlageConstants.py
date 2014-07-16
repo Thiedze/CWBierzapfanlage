@@ -15,7 +15,7 @@ class CWConstants:
 	def __init__(self):		
 		#Groesse des Bildes
 		self.w = 380
-		self.h = 300
+		self.h = 330
 		self.x = 140
 		self.y = 100
 

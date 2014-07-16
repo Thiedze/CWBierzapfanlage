@@ -134,7 +134,7 @@ class CWDetection:
 
 	def HitDetection(self):
 
-		x = 5
+		x = 3
 
 		#Linke und rechte Linie muessen erkannt worden sein
 		if self.left[0] != self.CWConstants.middle_left_point and self.right[0] != self.CWConstants.middle_right_point and self.left[0] != self.CWConstants.left_border_ignor and self.right[0] != self.CWConstants.right_border_ignor:
@@ -142,6 +142,7 @@ class CWDetection:
 			if DEBUG == True:
 				print ("=================Found side")			
 
+			self.CWConfigWindow.glasDetected(True)
 			self.CWSerial.StopRotation()	
 			self.stop_after_fill = False
 			self.empty = True
@@ -151,6 +152,7 @@ class CWDetection:
 				self.stop_count = self.stop_count + 1
 
 				if self.stop_after_fill == False and self.stop_count == x:
+					self.CWConfigWindow.fillGlass(False)
 					self.CWSerial.StopFill()
 					self.stop_after_fill = True
 					self.start_count = 0
@@ -159,26 +161,31 @@ class CWDetection:
 				self.start_count = self.start_count + 1
 
 				if self.stop_after_fill == False and self.start_count == x * 3 and self.empty == True:
-					self.CWConfigWindow.glasDetected(True)
+					self.CWConfigWindow.fillGlass(True)
+					self.CWConfigWindow.rotatePlatform(False)
 					self.CWSerial.StartFill()
 					self.start_count = 0
 					self.stop_count = 0
 		
 		else:
 			self.rotat_count = self.rotat_count + 1
-			if self.rotat_count == x * 2:
+			if self.rotat_count == x * 2:				
 				self.CWConfigWindow.glasDetected(False)
+				self.CWConfigWindow.rotatePlatform(True)
 				self.rotat_count = 0
-				if DEBUG == True:
-					print ("=================Found no side")
 				self.CWSerial.StartRotation(0.0)
 				self.top = (0, self.CWConstants.h)
+
+				if DEBUG == True:
+					print ("=================Found no side")
 				
 					
 
 		if self.stop_after_fill == True:
 			if DEBUG == True:
 				print ("=================Stop after fill")
+			
+			self.CWConfigWindow.rotatePlatform(True)
 			self.CWSerial.StartRotation(0.0)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
@@ -238,14 +245,14 @@ class CWDetection:
 			if DEBUG == True:			
 				print ("Draw fail")
 			
-
 		if DEBUG == True:
 			cv2.imshow("Original", self.img)
 
 	def extractBarcode(self):
 		try:
 			if DEBUG == True:
-				cv2.imshow("Barcode Image", self.img)			
+				cv2.imshow("Barcode Image", self.img)	
+		
 			scanner = zbar.ImageScanner()
 			scanner.parse_config('enable')
 			barcodeImage = Image.fromarray(self.img).convert('L')
@@ -279,13 +286,19 @@ class CWDetection:
 					#cv2.imshow("Hi", self.img)					
 					#self.extractBarcode()				
 					self.rotateImage()
+
+					#cv2.putText(self.img, str(self.bottom_foam[1]), (self.CWConstants.w/2 + 60, self.CWConstants.h/2), cv2.FONT_HERSHEY_PLAIN, 1.0, 255, thickness=1, lineType=cv2.CV_AA)
 					#y: y + h, x: x + w	
 					self.img = self.img[self.CWConstants.y: self.CWConstants.y + self.CWConstants.h, self.CWConstants.x: self.CWConstants.x + self.CWConstants.w]		
 					self.edgeDetection()
 
+					#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
+
 			except TypeError:
 				if DEBUG == True:
 					print ("You have no \"glass\"")
+		
+				self.CWConfigWindow.rotatePlatform(True)
 				self.CWSerial.StartRotation(0)
 
 			except:
