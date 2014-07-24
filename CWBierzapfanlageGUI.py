@@ -83,7 +83,7 @@ class StatusField(QtGui.QWidget):
 
 
 class CWConfigWindow(QtGui.QWidget):
-	def __init__(self,CWConstants, CWProfileManager, parent=None,w=400,h=590):
+	def __init__(self,CWConstants, CWProfileManager, parent=None,w=400,h=620):
 		self.CWConstants = CWConstants
 		self.CWProfileManager = CWProfileManager
 		self.w=w
@@ -97,7 +97,7 @@ class CWConfigWindow(QtGui.QWidget):
 		
 	def createAndAddGUIElements(self):
 
-		self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
+		#self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
 
 		#Debug Start Rotate
 		#Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
@@ -111,11 +111,20 @@ class CWConfigWindow(QtGui.QWidget):
 		#Debug Stop Fill
 		#Button(parent=self, callback=self.stopFill, text="Stop Fill", x=280, y=(self.h-620), w=80)
 
+		#Glass detected label
+		self.glassDetectedLabel = Label(parent=self, title="Glass detected",x=10,y=(self.h-90), w=100)
+
+		#Fill glass label
+		self.fillGlassLabel = Label(parent=self, title="Fill glass",x=140,y=(self.h-90), w=100)
+
+		#Rotate platform label
+		self.rotatePlatformLabel = Label(parent=self, title="Rotate platform",x=230,y=(self.h-90), w=150)
+
 		#Saved Settings ComboBox
-		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-580),w=(self.w-150))
+		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-610),w=(self.w-150))
 		
 		#TextField for saving
-		self.textField = TextField(parent=self,  x=(self.w/2+60),y=(self.h-580),w=130)
+		self.textField = TextField(parent=self,  x=(self.w/2+60),y=(self.h-610),w=130)
 		
 		#Close Button
 		Button(parent=self,callback=self.quit, text="Quit",x=10,y=(self.h-40))
@@ -132,25 +141,25 @@ class CWConfigWindow(QtGui.QWidget):
 		Button(parent=self,callback=self.deleteSetting,text="Delete",x=(self.w-70),y=(self.h-40))
 
 		#Middle Right Point Slider
-		self.middleRightPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleRightPointValue, text=self.CWConstants.middleRightPointString, x=10, y=(self.h-100), w=(self.w-20))
+		self.middleRightPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleRightPointValue, text=self.CWConstants.middleRightPointString, x=10, y=(self.h-130), w=(self.w-20))
 
 		#Middle Left Point Slider		
-		self.middleLeftPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleLeftPointValue, text=self.CWConstants.middleLeftPointString, x=10, y=(self.h-170), w=(self.w-20))
+		self.middleLeftPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleLeftPointValue, text=self.CWConstants.middleLeftPointString, x=10, y=(self.h-200), w=(self.w-20))
 
 		#Distance Top To Bottom Line Slider
-		self.distanceTopToBottomLineSlider = Slider(parent=self, callback=self.CWProfileManager.changeDistanceTopToBottomLineValue, text=self.CWConstants.distanceTopToBottomLineString,x=10,y=(self.h-240), w=(self.w-20))
+		self.distanceTopToBottomLineSlider = Slider(parent=self, callback=self.CWProfileManager.changeDistanceTopToBottomLineValue, text=self.CWConstants.distanceTopToBottomLineString,x=10,y=(self.h-270), w=(self.w-20))
 
 		#Border Glas Distance Div Slider
-		self.borderGlasDistanceDivSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceDivValue,  text=self.CWConstants.borderGlasDistanceDivString, x=10, y=(self.h-310), w=(self.w-20))
+		self.borderGlasDistanceDivSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceDivValue,  text=self.CWConstants.borderGlasDistanceDivString, x=10, y=(self.h-340), w=(self.w-20))
 
 		#Border Glas Distance Slider
-		self.borderGlasDistanceSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceValue, text=self.CWConstants.borderGlasDistanceString, x=10, y=(self.h-380), w=(self.w-20))
+		self.borderGlasDistanceSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceValue, text=self.CWConstants.borderGlasDistanceString, x=10, y=(self.h-410), w=(self.w-20))
 
 		#Right Border Ignoer Slider
-		self.rightBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeRightBorderIgnorValue, text=self.CWConstants.rightBorderIgnorString, x=10, y=(self.h-450), w=(self.w-20))
+		self.rightBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeRightBorderIgnorValue, text=self.CWConstants.rightBorderIgnorString, x=10, y=(self.h-480), w=(self.w-20))
 
 		#Left Border Ignor Slider
-		self.leftBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeLeftBorderIgnorValue, text=self.CWConstants.leftBorderIgnorString, x=10, y=(self.h-520), w=(self.w-20))
+		self.leftBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeLeftBorderIgnorValue, text=self.CWConstants.leftBorderIgnorString, x=10, y=(self.h-550), w=(self.w-20))
 
 	#Slider auf den neuen Wert setzen
 	#Alle neuen Slider muessen hier hinzugefuegt werden
@@ -193,18 +202,28 @@ class CWConfigWindow(QtGui.QWidget):
 		self.CWConstants.stopProgram = True
 
 	def quit(self):
-		sys.exit(0)		
+		sys.exit(0)
 
 	def detectingSetting(self):
 		print ("GUI Detecting Setting")
 
 	def glasDetected(self, detected = False):
-		if DEBUG == True:
-			print detected
 		if detected == True:
-			self.statusField.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(0, 255, 0).name())
+			self.glassDetectedLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
 		else:
-			self.statusField.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name())
+			self.glassDetectedLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
+
+	def fillGlass(self, fill = False):
+		if fill == True:
+			self.fillGlassLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
+		else:
+			self.fillGlassLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
+
+	def rotatePlatform(self, rotate = False):
+		if rotate == True:
+			self.rotatePlatformLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
+		else:
+			self.rotatePlatformLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
 
 	#def startRotate(self):
 	#	self.CWDetection.CWSerial.StartRotation(0.0)
