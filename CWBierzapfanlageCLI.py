@@ -4,12 +4,13 @@ from sys import argv
 
 import cv2
 import math
-import Image
+#import Image
+from PIL import Image
 import numpy
 import sys
 import time
 import pdb
-import zbar
+#import zbar
 import subprocess
 from thread import start_new_thread
 from CWBierzapfanlageSerial import CWSerial
@@ -242,7 +243,7 @@ class CWDetection:
 		if DEBUG == True:
 			cv2.imshow("Original", self.img)
 
-	def extractBarcode(self):
+	'''def extractBarcode(self):
 		try:
 			if DEBUG == True:
 				cv2.imshow("Barcode Image", self.img)			
@@ -259,7 +260,7 @@ class CWDetection:
 					print 'Hit' + now()
 		except:
 			if DEBUG == True:
-				print 'Barcode scanner error: ', sys.exc_info()[0]
+				print 'Barcode scanner error: ', sys.exc_info()[0]'''
 			
 	def rotateImage(self):
 		try:
