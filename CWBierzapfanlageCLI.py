@@ -198,7 +198,7 @@ class CWDetection:
 				
 		return(vertical_lines, horizontal_lines)
 
-	def PrepareFrame(self):
+	def PrepareFrame(self, lowThreshold, ratio, kernel_size):
 		self.gray = cv2.cvtColor(self.img ,cv2.COLOR_BGR2GRAY)
 		self.gray_only = self.gray
 		self.gray = cv2.adaptiveThreshold(self.gray,255,0,1,15,2)
@@ -217,11 +217,10 @@ class CWDetection:
 
 		return (detected_edges_vertical, detected_edges_horizontal)
 
-	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):
-		prepared_frames = PrepareFrame()
-		prepared_lines = GetLines(prepared_frames)
-			
+	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):			
 		try:
+			prepared_frames = self.PrepareFrame(lowThreshold, ratio, kernel_size)
+			prepared_lines = self.GetLines(prepared_frames)
 			self.LeftLine(prepared_lines[0])
 			self.RightLine(prepared_lines[0])
 			self.TopLine(prepared_lines[1])
@@ -231,6 +230,9 @@ class CWDetection:
 		except TypeError:
 			if DEBUG == True:
 				print ("LineSearching fail")
+		except:
+			if DEBUG == True:
+				print (sys.exc_info())
 
 		try:
 			self.HitDetection()
