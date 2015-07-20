@@ -92,7 +92,7 @@ class CWDetection:
 					self.top = (line[0], line[1])
 				continue
 		except:
-			print("TopLine : ", sys.exc_info())
+			print("TopLine fail: ", sys.exc_info())
 
 	def BottomFoamLine(self, lowThreshold, ratio, kernel_size):
 		try:
@@ -102,10 +102,11 @@ class CWDetection:
 			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
 			in_range_dst = cv2.inRange(self.gray_only, numpy.asarray(40), numpy.asarray(70), color_mask)
 
-			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
+			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(8,8))
 			in_range_dst = cv2.erode(in_range_dst, kernel)
 
-			#cv2.imshow("Foam" , in_range_dst)
+			if DEBUG == True:
+				cv2.imshow("Foam" , in_range_dst)
 
 			contours, hierarchy = cv2.findContours(in_range_dst,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
@@ -198,22 +199,13 @@ class CWDetection:
 				if DEBUG == True:
 					print ("=================Continue after fill")
 
-	def GetLines(self, prepared_frames):
-		lines = []
-		#					image		     rho  theta      thres  lines  lenght   stn
-		vertical_lines = cv2.HoughLinesP(prepared_frames[0], 1, math.pi , 1, None, 10, 0)
-		horizontal_lines = cv2.HoughLinesP(prepared_frames[1], 1, math.pi / 2, 1,    None,  10,   0)
+	def GetVerticalLines(self, prepared_frame):
+		# image, rho, theta, thres, lines, lenght, stn
+		return cv2.HoughLinesP(prepared_frame, 1, math.pi , 1, None, 10, 0)
+	def GetHorizontalLines(self, prepared_frame):
+		# image, rho, theta, thres, lines, lenght, stn
+		return cv2.HoughLinesP(prepared_frame, 1, math.pi / 2, 1,    None,  10,   0)
 
-		#Test-Ausgabe aller gefundenen Linien
-		if DEBUG == True:
-			for line in vertical_lines[0]:
-				pt1 = (line[0], line[1])
-				pt2 = (line[2], line[3])
-				cv2.line(self.img, pt1, pt2, (0,0,255), 3)
-				
-		lines.append(vertical_lines)
-		lines.append(horizontal_lines)
-		return lines
 
 	def PrepareFrame(self, lowThreshold, ratio, kernel_size):
 		detected_edges = []
@@ -238,18 +230,24 @@ class CWDetection:
 	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):			
 		try:
 			prepared_frames = self.PrepareFrame(lowThreshold, ratio, kernel_size)
-			prepared_lines = self.GetLines(prepared_frames)
-			self.LeftLine(prepared_lines[0])
-			self.RightLine(prepared_lines[0])
-			self.TopLine(prepared_lines[1])
+			vertical_lines = self.GetVerticalLines(prepared_frames[0])
+			horizontal_lines = self.GetHorizontalLines(prepared_frames[1])	
+			if vertical_lines != None:					
+				self.LeftLine(vertical_lines)
+				self.RightLine(vertical_lines)
+			elif DEBUG == True:
+				print("vertical_lines", type(vertical_lines))
+			if horizontal_lines != None:					
+				self.TopLine(horizontal_lines)
+			elif DEBUG == True:
+				print("horizontal_lines", type(horizontal_lines))
 			#self.BottomBeerLine(lowThreshold, ratio, kernel_size)
 			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
 			
 		except TypeError:
 			if DEBUG == True:
-				print ("LineSearching fail: ", sys.exc_info())
-				print("prepared_frames", prepared_frames)
-				print("prepared_lines", prepared_lines)
+				print ("LineSearching fail: ", sys.exc_info())		
+		
 		except:
 			if DEBUG == True:
 				print (sys.exc_info())
