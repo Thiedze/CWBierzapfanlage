@@ -40,7 +40,7 @@ class CWDetection:
 		self.white_pixel_in_percent = 0
 		self.full = False
 		self.empty = True
-		self.ready_to_fill = True
+		#self.ready_to_fill = True
 
 		self.top = (0, self.CWConstants.h)
 		self.left = (self.CWConstants.middle_right_point,0)
@@ -50,65 +50,77 @@ class CWDetection:
 
 	
 	def LeftLine(self, lines):
-		self.left = (self.CWConstants.middle_left_point,0)
-		for line in lines[0]:
-			if line[0] < self.CWConstants.middle_left_point:
-				#Es wird geschaut, ob die gefundene Linie
-				#weiter links liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
-				if line[0] < self.left[0] and line[0] == line[2] and line[0] > self.CWConstants.left_border_ignor:
-					self.left = (line[0], line[1])
-					continue
-		
-		# activate glass detection after left line is no longer detected
-		if self.is_glass_detection_active and self.left[0] == self.CWConstants.middle_left_point:
-			self.is_glass_detection_active = True
+		try:
+			self.left = (self.CWConstants.middle_left_point,0)
+			for line in lines[0]:
+				if line[0] < self.CWConstants.middle_left_point:
+					#Es wird geschaut, ob die gefundene Linie
+					#weiter links liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
+					if line[0] < self.left[0] and line[0] == line[2] and line[0] > self.CWConstants.left_border_ignor:
+						self.left = (line[0], line[1])
+						continue
+			
+			# activate glass detection after left line is no longer detected
+			if self.is_glass_detection_active and self.left[0] == self.CWConstants.middle_left_point:
+				self.is_glass_detection_active = True
+		except: 
+			print("LeftLine fail: : ", sys.exc_info())
 
 	def RightLine(self, lines):
-		self.right = (self.CWConstants.middle_right_point,0)
-		for line in lines[0]:
-			#length = math.sqrt((line[0]-line[2])**2+(line[1]-line[3])**2)
-			if line[0] > self.CWConstants.middle_right_point:
-				#Es wird geschaut, ob die gefundene Linie
-				#weiter rechts liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
-				if line[0] > self.right[0] and line[0] == line[2] and line[0] < self.CWConstants.right_border_ignor:
-					#Passt die Distanze
-					#if line[0] - self.left[0] >= self.CWConstants.border_glas_distance - self.CWConstants.border_glas_distance_div:
-						#if line[0] - self.left[0] <= self.CWConstants.border_glas_distance + self.CWConstants.border_glas_distance_div:
-					self.right = (line[0], line[1])
-					continue
+		try:
+			self.right = (self.CWConstants.middle_right_point,0)
+			for line in lines[0]:
+				#length = math.sqrt((line[0]-line[2])**2+(line[1]-line[3])**2)
+				if line[0] > self.CWConstants.middle_right_point:
+					#Es wird geschaut, ob die gefundene Linie
+					#weiter rechts liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
+					if line[0] > self.right[0] and line[0] == line[2] and line[0] < self.CWConstants.right_border_ignor:
+						#Passt die Distanze
+						#if line[0] - self.left[0] >= self.CWConstants.border_glas_distance - self.CWConstants.border_glas_distance_div:
+							#if line[0] - self.left[0] <= self.CWConstants.border_glas_distance + self.CWConstants.border_glas_distance_div:
+						self.right = (line[0], line[1])
+						continue
+		except: 
+			print("RightLine fail: ", sys.exc_info())
 
 	def TopLine(self, lines):
-		for line in lines[0]:
-			#Es wird geschaut, ob die gefundene Linie
-			#weiter oben liegt als die aktuelle :and: wagerecht ist :and: noch nicht initialisiert wurde		
-			if line[1] < self.top[1] and line[1] == line[3] and self.top[1] == self.CWConstants.h:
-				self.top = (line[0], line[1])
-			continue
+		try:
+			for line in lines[0]:
+				#Es wird geschaut, ob die gefundene Linie
+				#weiter oben liegt als die aktuelle :and: wagerecht ist :and: noch nicht initialisiert wurde		
+				if line[1] < self.top[1] and line[1] == line[3] and self.top[1] == self.CWConstants.h:
+					self.top = (line[0], line[1])
+				continue
+		except:
+			print("TopLine : ", sys.exc_info())
 
 	def BottomFoamLine(self, lowThreshold, ratio, kernel_size):
-		self.bottom_foam = (0, self.CWConstants.h)		
-		
-		#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
-		color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
-		in_range_dst = cv2.inRange(self.gray_only, numpy.asarray(40), numpy.asarray(70), color_mask)
+		try:
+			self.bottom_foam = (0, self.CWConstants.h)		
+			
+			#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
+			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
+			in_range_dst = cv2.inRange(self.gray_only, numpy.asarray(40), numpy.asarray(70), color_mask)
 
-		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
-		in_range_dst = cv2.erode(in_range_dst, kernel)
+			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
+			in_range_dst = cv2.erode(in_range_dst, kernel)
 
-		#cv2.imshow("Foam" , in_range_dst)
+			#cv2.imshow("Foam" , in_range_dst)
 
-		contours, hierarchy = cv2.findContours(in_range_dst,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+			contours, hierarchy = cv2.findContours(in_range_dst,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
-		number_of_black_pixel = self.CWConstants.total_number_of_pixel - cv2.countNonZero(in_range_dst)
-		white_pixel_in_percent_image =  (1 -float(number_of_black_pixel)/ float(self.CWConstants.total_number_of_pixel))*100
+			number_of_black_pixel = self.CWConstants.total_number_of_pixel - cv2.countNonZero(in_range_dst)
+			white_pixel_in_percent_image =  (1 -float(number_of_black_pixel)/ float(self.CWConstants.total_number_of_pixel))*100
 
-		if white_pixel_in_percent_image >= self.white_pixel_in_percent:
-			for cnt in contours:
-				x,y,w,h = cv2.boundingRect(cnt)
-				#Es wird geschaut, ob die gefundene Kontur(Linie)
-				#weiter oben liegt als die aktuelle :and: groesser als 40 Pixel breit ist	
-				if y < self.bottom_foam[1] and w > 1 and  (x > self.CWConstants.left_border_ignor or x < self.CWConstants.right_border_ignor) and (x < self.CWConstants.middle_left_point or x > self.CWConstants.middle_right_point):
-					self.bottom_foam = (x, y)
+			if white_pixel_in_percent_image >= self.white_pixel_in_percent:
+				for cnt in contours:
+					x,y,w,h = cv2.boundingRect(cnt)
+					#Es wird geschaut, ob die gefundene Kontur(Linie)
+					#weiter oben liegt als die aktuelle :and: groesser als 40 Pixel breit ist	
+					if y < self.bottom_foam[1] and w > 1 and  (x > self.CWConstants.left_border_ignor or x < self.CWConstants.right_border_ignor) and (x < self.CWConstants.middle_left_point or x > self.CWConstants.middle_right_point):
+						self.bottom_foam = (x, y)
+		except: 
+			print("BottomFoamLine: ", sys.exc_info())
 
 	def GlassIsFull(self):
 		if self.stop_after_fill == False and self.stop_count == self.CWConstants.wait_frames_count:
@@ -179,7 +191,7 @@ class CWDetection:
 			# counter for frames (waiting time before rotation)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
-			if self.stop_after_fill_count == self.CWConstants.wait_frames_count and self.ready_to_fill == False:
+			if self.stop_after_fill_count == self.CWConstants.wait_frames_count: # and self.ready_to_fill == False:
 				self.stop_after_fill = False
 				self.empty = True
 				self.stop_after_fill_count = 0
