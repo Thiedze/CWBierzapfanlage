@@ -13,6 +13,8 @@ DEBUG = False
 
 class CWConstants:
 	def __init__(self):		
+		self.wait_frames_count = 3
+		
 		#Groesse des Bildes
 		self.w = 380
 		self.h = 330

@@ -80,33 +80,6 @@ class CWDetection:
 				self.top = (line[0], line[1])
 			continue
 
-	"""def BottomBeerLine(self, lowThreshold, ratio, kernel_size):
-		self.bottom_beer = (0, self.h)
-
-		#Gelber Bereich
-		MIN = numpy.array([50, 140, 175],numpy.uint8) - 20
-		MAX = numpy.array([30, 90, 110],numpy.uint8)
-
-		#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
-		color_mask = numpy.zeros((self.h,self.w,3), numpy.uint8)
-		in_range_dst = cv2.inRange(self.img, MIN, MAX, color_mask)
-
-		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(4,4))
-		in_range_dst = cv2.erode(in_range_dst, kernel)
-		
-		self.in_range_beer = in_range_dst.copy()
-
-		contours, hierarchy = cv2.findContours(in_range_dst,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-		#cv2.imshow("Beer", in_range_dst)
-
-		for cnt in contours:
-			x,y,w,h = cv2.boundingRect(cnt)
-			#Es wird geschaut, ob die gefundene Kontur(Linie)
-			#weiter unten liegt als die aktuelle :and: im Messbereich liegt :and: groesser als 15 Pixel breit ist	
-			if y < self.bottom_beer[1] and w > 5:
-				self.bottom_beer = (x, y)"""
-
 	def BottomFoamLine(self, lowThreshold, ratio, kernel_size):
 		self.bottom_foam = (0, self.CWConstants.h)		
 		
@@ -132,56 +105,59 @@ class CWDetection:
 				if y < self.bottom_foam[1] and w > 1 and  (x > self.CWConstants.left_border_ignor or x < self.CWConstants.right_border_ignor) and (x < self.CWConstants.middle_left_point or x > self.CWConstants.middle_right_point):
 					self.bottom_foam = (x, y)
 
+	def GlassIsFull(self):
+		if self.stop_after_fill == False and self.stop_count == self.CWConstants.wait_frames_count:
+			self.CWConfigWindow.fillGlass(False)
+			self.CWSerial.StopFill()
+			self.stop_after_fill = True
+			self.start_count = 0
+			self.stop_count = 0	
+			
+	def GlassIsEmpty(self):
+		self.start_count = self.start_count + 1
+
+		if self.stop_after_fill == False and self.start_count == self.CWConstants.wait_frames_count * 3 and self.empty == True:
+			self.CWConfigWindow.fillGlass(True)
+			self.CWConfigWindow.rotatePlatform(False)
+			self.CWSerial.StartFill()
+			self.start_count = 0
+			self.stop_count = 0
+
+	def GalssIsInRange(self):
+		if DEBUG == True:
+			print ("=================Found side")			
+
+		self.CWConfigWindow.glasDetected(True)
+		self.CWSerial.StopRotation()	
+		self.stop_after_fill = False
+		self.empty = True
+		
+		#Kontrolle, ob die Schaum- oder Bierkante die definierte Hoehe erreicht hat
+		if  self.bottom_foam[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line or self.bottom_beer[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line:
+			self.stop_count = self.stop_count + 1
+			GlassIsFull()
+		else:
+			GlassIsEmpty()
+				
+	def NoGlassFound(self):
+		self.rotat_count = self.rotat_count + 1
+		if self.rotat_count == self.CWConstants.wait_frames_count * 2:				
+			self.CWConfigWindow.glasDetected(False)
+			self.CWConfigWindow.rotatePlatform(True)
+			self.rotat_count = 0
+			self.CWSerial.StartRotation(0.0)
+			self.top = (0, self.CWConstants.h)
+
+			if DEBUG == True:
+				print ("=================Found no side")
 
 	def HitDetection(self):
-
-		x = 3
-
 		#Linke und rechte Linie muessen erkannt worden sein
 		if self.left[0] != self.CWConstants.middle_left_point and self.right[0] != self.CWConstants.middle_right_point and self.left[0] != self.CWConstants.left_border_ignor and self.right[0] != self.CWConstants.right_border_ignor:
-			
-			if DEBUG == True:
-				print ("=================Found side")			
-
-			self.CWConfigWindow.glasDetected(True)
-			self.CWSerial.StopRotation()	
-			self.stop_after_fill = False
-			self.empty = True
-			
-			#Kontrolle, ob die Schaum- oder Bierkante die definierte Hoehe erreicht hat
-			if  self.bottom_foam[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line or self.bottom_beer[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line:
-				self.stop_count = self.stop_count + 1
-
-				if self.stop_after_fill == False and self.stop_count == x:
-					self.CWConfigWindow.fillGlass(False)
-					self.CWSerial.StopFill()
-					self.stop_after_fill = True
-					self.start_count = 0
-					self.stop_count = 0	
-			else:
-				self.start_count = self.start_count + 1
-
-				if self.stop_after_fill == False and self.start_count == x * 3 and self.empty == True:
-					self.CWConfigWindow.fillGlass(True)
-					self.CWConfigWindow.rotatePlatform(False)
-					self.CWSerial.StartFill()
-					self.start_count = 0
-					self.stop_count = 0
-		
+			self.GlassIsInRange()
 		else:
-			self.rotat_count = self.rotat_count + 1
-			if self.rotat_count == x * 2:				
-				self.CWConfigWindow.glasDetected(False)
-				self.CWConfigWindow.rotatePlatform(True)
-				self.rotat_count = 0
-				self.CWSerial.StartRotation(0.0)
-				self.top = (0, self.CWConstants.h)
-
-				if DEBUG == True:
-					print ("=================Found no side")
+			self.NoGlassFound()
 				
-					
-
 		if self.stop_after_fill == True:
 			if DEBUG == True:
 				print ("=================Stop after fill")
@@ -190,12 +166,26 @@ class CWDetection:
 			self.CWSerial.StartRotation(0.0)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
-			if self.stop_after_fill_count == x and self.ready_to_fill == False:
+			if self.stop_after_fill_count == self.CWConstants.wait_frames_count and self.ready_to_fill == False:
 				self.stop_after_fill = False
 				self.empty = True
 				self.stop_after_fill_count = 0
 
-	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):
+	def GetLines(self, ):
+		#					image		     rho  theta      thres  lines  lenght   stn
+		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,  10,   0)
+		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
+
+		#Test-Ausgabe aller gefundenen Linien
+		if DEBUG == True:
+			for line in vertical_lines[0]:
+				pt1 = (line[0], line[1])
+				pt2 = (line[2], line[3])
+				cv2.line(self.img, pt1, pt2, (0,0,255), 3)
+				
+		return(vertical_lines, horizontal_lines)
+
+	def PrepareFrame(self):
 		self.gray = cv2.cvtColor(self.img ,cv2.COLOR_BGR2GRAY)
 		self.gray_only = self.gray
 		self.gray = cv2.adaptiveThreshold(self.gray,255,0,1,15,2)
@@ -212,21 +202,16 @@ class CWDetection:
 			cv2.imshow("Gray Vertical", detected_edges_vertical)
 			cv2.imshow("Gray Horizontal", detected_edges_horizontal)
 
-		#					image		     rho  theta      thres  lines  lenght   stn
-		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,  10,   0)
-		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
+		return (detected_edges_vertical, detected_edges_horizontal)
 
-		#Test-Ausgabe aller gefundenen Linien
-		if DEBUG == True:
-			for line in vertical_lines[0]:
-				pt1 = (line[0], line[1])
-				pt2 = (line[2], line[3])
-				cv2.line(self.img, pt1, pt2, (0,0,255), 3)
+	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):
+		prepared_frames = PrepareFrame()
+		prepared_lines = GetLines(prepared_frames)
 			
 		try:
-			self.LeftLine(vertical_lines)
-			self.RightLine(vertical_lines)
-			self.TopLine(horizontal_lines)
+			self.LeftLine(prepared_lines[0])
+			self.RightLine(prepared_lines[0])
+			self.TopLine(prepared_lines[1])
 			#self.BottomBeerLine(lowThreshold, ratio, kernel_size)
 			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
 			
