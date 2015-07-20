@@ -144,9 +144,9 @@ class CWDetection:
 		#Kontrolle, ob die Schaum- oder Bierkante die definierte Hoehe erreicht hat
 		if  self.bottom_foam[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line or self.bottom_beer[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line:
 			self.stop_count = self.stop_count + 1
-			GlassIsFull()
+			self.GlassIsFull()
 		else:
-			GlassIsEmpty()
+			self.GlassIsEmpty()
 				
 	def NoGlassFound(self):
 		self.rotat_count = self.rotat_count + 1
@@ -184,10 +184,11 @@ class CWDetection:
 				self.empty = True
 				self.stop_after_fill_count = 0
 
-	def GetLines(self, ):
+	def GetLines(self, prepared_frames):
+		lines = []
 		#					image		     rho  theta      thres  lines  lenght   stn
-		horizontal_lines = cv2.HoughLinesP(detected_edges_horizontal, 1, math.pi / 2, 1,    None,  10,   0)
-		vertical_lines = cv2.HoughLinesP(detected_edges_vertical, 1, math.pi , 1, None, 10, 0)
+		vertical_lines = cv2.HoughLinesP(prepared_frames[0], 1, math.pi , 1, None, 10, 0)
+		horizontal_lines = cv2.HoughLinesP(prepared_frames[1], 1, math.pi / 2, 1,    None,  10,   0)
 
 		#Test-Ausgabe aller gefundenen Linien
 		if DEBUG == True:
@@ -196,9 +197,12 @@ class CWDetection:
 				pt2 = (line[2], line[3])
 				cv2.line(self.img, pt1, pt2, (0,0,255), 3)
 				
-		return(vertical_lines, horizontal_lines)
+		lines.append(vertical_lines)
+		lines.append(horizontal_lines)
+		return lines
 
 	def PrepareFrame(self, lowThreshold, ratio, kernel_size):
+		detected_edges = []
 		self.gray = cv2.cvtColor(self.img ,cv2.COLOR_BGR2GRAY)
 		self.gray_only = self.gray
 		self.gray = cv2.adaptiveThreshold(self.gray,255,0,1,15,2)
@@ -208,14 +212,14 @@ class CWDetection:
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
 
-		detected_edges_vertical = cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
-		detected_edges_horizontal = cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
+		detected_edges.append(cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size))
+		detected_edges.append(cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size))
 
 		if DEBUG == True:
-			cv2.imshow("Gray Vertical", detected_edges_vertical)
-			cv2.imshow("Gray Horizontal", detected_edges_horizontal)
+			cv2.imshow("Gray Vertical", detected_edges[0])
+			cv2.imshow("Gray Horizontal", detected_edges[1])
 
-		return (detected_edges_vertical, detected_edges_horizontal)
+		return detected_edges
 
 	def edgeDetection(self, lowThreshold=50, ratio=3, kernel_size=3):			
 		try:
@@ -238,7 +242,7 @@ class CWDetection:
 			self.HitDetection()
 		except:
 			if DEBUG == True:
-				print ("HitDetection fail")
+				print ("HitDetection fail: ", sys.exc_info())
 
 		try:
 			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
