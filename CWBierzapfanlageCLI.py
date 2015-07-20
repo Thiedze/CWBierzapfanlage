@@ -123,7 +123,7 @@ class CWDetection:
 			self.start_count = 0
 			self.stop_count = 0
 
-	def GalssIsInRange(self):
+	def GlassIsInRange(self):
 		if DEBUG == True:
 			print ("=================Found side")			
 
