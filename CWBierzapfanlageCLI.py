@@ -183,6 +183,8 @@ class CWDetection:
 				self.stop_after_fill = False
 				self.empty = True
 				self.stop_after_fill_count = 0
+				if DEBUG == True:
+					print ("=================Continue after fill")
 
 	def GetLines(self, prepared_frames):
 		lines = []
@@ -233,7 +235,7 @@ class CWDetection:
 			
 		except TypeError:
 			if DEBUG == True:
-				print ("LineSearching fail")
+				print ("LineSearching fail: ", sys.exc_info())
 		except:
 			if DEBUG == True:
 				print (sys.exc_info())
@@ -248,7 +250,7 @@ class CWDetection:
 			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
 		except:
 			if DEBUG == True:			
-				print ("Draw fail")
+				print ("Draw fail: ", sys.exc_info())
 			
 		if DEBUG == True:
 			cv2.imshow("Original", self.img)
@@ -301,7 +303,7 @@ class CWDetection:
 
 			except TypeError:
 				if DEBUG == True:
-					print ("You have no \"glass\"")
+					print ("You have no \"glass\": ", sys.exc_info())
 		
 				self.CWConfigWindow.rotatePlatform(True)
 				self.CWSerial.StartRotation(0)
