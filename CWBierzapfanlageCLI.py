@@ -239,9 +239,6 @@ class CWDetection:
 		try:
 			prepared_frames = self.PrepareFrame(lowThreshold, ratio, kernel_size)
 			prepared_lines = self.GetLines(prepared_frames)
-			if DEBUG == True:
-				print("prepared_frames", prepared_frames)
-				print("prepared_lines", prepared_lines)
 			self.LeftLine(prepared_lines[0])
 			self.RightLine(prepared_lines[0])
 			self.TopLine(prepared_lines[1])
@@ -251,6 +248,8 @@ class CWDetection:
 		except TypeError:
 			if DEBUG == True:
 				print ("LineSearching fail: ", sys.exc_info())
+				print("prepared_frames", prepared_frames)
+				print("prepared_lines", prepared_lines)
 		except:
 			if DEBUG == True:
 				print (sys.exc_info())
