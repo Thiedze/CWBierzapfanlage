@@ -239,9 +239,10 @@ class CWDetection:
 		try:
 			prepared_frames = self.PrepareFrame(lowThreshold, ratio, kernel_size)
 			prepared_lines = self.GetLines(prepared_frames)
-			self.LeftLine(prepared_lines[0])
-			self.RightLine(prepared_lines[0])
-			if len(prepared_lines) > 1:
+			if prepared_lines[0] != None:
+				self.LeftLine(prepared_lines[0])
+				self.RightLine(prepared_lines[0])
+			if prepared_lines[1] != None: 
 				self.TopLine(prepared_lines[1])
 			#self.BottomBeerLine(lowThreshold, ratio, kernel_size)
 			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
