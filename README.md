@@ -12,3 +12,6 @@ sudo yum install opencv-python.x86_64D
 sudo yum install python-devel
 
 sudo yum install pyserial
+
+sudo yum install python-pillow
+
