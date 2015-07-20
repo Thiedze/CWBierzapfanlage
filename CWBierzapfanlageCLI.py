@@ -61,8 +61,10 @@ class CWDetection:
 						continue
 			
 			# activate glass detection after left line is no longer detected
-			if self.is_glass_detection_active and self.left[0] == self.CWConstants.middle_left_point:
+			if self.is_glass_detection_active == False and self.left[0] == self.CWConstants.middle_left_point:
 				self.is_glass_detection_active = True
+				if DEBUG == True:
+					print("============Glass detection activated")
 		except: 
 			print("LeftLine fail: : ", sys.exc_info())
 
@@ -171,7 +173,10 @@ class CWDetection:
 			self.top = (0, self.CWConstants.h)
 
 			if DEBUG == True:
-				print ("=================Found no side / same glass")
+				if self.is_glass_detection_active == True: 
+					print ("=================Found no side")
+				else:
+					print("=================Same glass")
 
 	def HitDetection(self):
 		#Linke und rechte Linie muessen erkannt worden sein
