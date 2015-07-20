@@ -146,7 +146,7 @@ class CWDetection:
 
 	def GlassIsInRange(self):
 		if DEBUG == True:
-			print ("=================Found side")			
+			print ("=================Found side / Fill")			
 
 		self.CWConfigWindow.glasDetected(True)
 		self.CWSerial.StopRotation()	
@@ -170,7 +170,7 @@ class CWDetection:
 			self.top = (0, self.CWConstants.h)
 
 			if DEBUG == True:
-				print ("=================Found no side")
+				print ("=================Found no side / same glass")
 
 	def HitDetection(self):
 		#Linke und rechte Linie muessen erkannt worden sein
@@ -241,7 +241,8 @@ class CWDetection:
 			prepared_lines = self.GetLines(prepared_frames)
 			self.LeftLine(prepared_lines[0])
 			self.RightLine(prepared_lines[0])
-			self.TopLine(prepared_lines[1])
+			if prepared_lines.size > 1:
+				self.TopLine(prepared_lines[1])
 			#self.BottomBeerLine(lowThreshold, ratio, kernel_size)
 			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
 			
