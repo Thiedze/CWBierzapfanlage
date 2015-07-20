@@ -209,7 +209,7 @@ class CWDetection:
 		self.gray_only = self.gray
 		self.gray = cv2.adaptiveThreshold(self.gray,255,0,1,15,2)
 
-		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_vertical = cv2.erode(self.gray, kernel)
 		kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 		self.gray_horizontal = cv2.erode(self.gray, kernel)
