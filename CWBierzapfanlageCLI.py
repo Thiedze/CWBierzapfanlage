@@ -33,6 +33,7 @@ class CWDetection:
 		self.start_count = 0
 		self.stop_count = 0
 		self.rotat_count = 0
+		self.is_glass_detection_active = True
 		self.stop_after_fill = False
 		self.stop_after_fill_count = 0
 		self.full = True
@@ -57,6 +58,10 @@ class CWDetection:
 				if line[0] < self.left[0] and line[0] == line[2] and line[0] > self.CWConstants.left_border_ignor:
 					self.left = (line[0], line[1])
 					continue
+		
+		# activate glass detection after left line is no longer detected
+		if self.is_glass_detection_active and self.left[0] == self.CWConstants.middle_left_point:
+			self.is_glass_detection_active = True
 
 	def RightLine(self, lines):
 		self.right = (self.CWConstants.middle_right_point,0)
@@ -110,6 +115,10 @@ class CWDetection:
 			self.CWConfigWindow.fillGlass(False)
 			self.CWSerial.StopFill()
 			self.stop_after_fill = True
+			
+			# flag for next glass detection
+			self.is_glass_detection_active = False
+			
 			self.start_count = 0
 			self.stop_count = 0	
 			
@@ -153,7 +162,9 @@ class CWDetection:
 
 	def HitDetection(self):
 		#Linke und rechte Linie muessen erkannt worden sein
-		if self.left[0] != self.CWConstants.middle_left_point and self.right[0] != self.CWConstants.middle_right_point and self.left[0] != self.CWConstants.left_border_ignor and self.right[0] != self.CWConstants.right_border_ignor:
+		if (self.is_glass_detection_active == True 
+			and self.left[0] != self.CWConstants.middle_left_point 
+			and self.right[0] != self.CWConstants.middle_right_point):
 			self.GlassIsInRange()
 		else:
 			self.NoGlassFound()
@@ -164,6 +175,8 @@ class CWDetection:
 			
 			self.CWConfigWindow.rotatePlatform(True)
 			self.CWSerial.StartRotation(0.0)
+			
+			# counter for frames (waiting time before rotation)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
 			
 			if self.stop_after_fill_count == self.CWConstants.wait_frames_count and self.ready_to_fill == False:
