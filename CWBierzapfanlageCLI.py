@@ -24,11 +24,11 @@ class CWDetection:
 	def __init__ (self, CWConstants, CWConfigWindow):
 		self.CWConfigWindow = CWConfigWindow
 		self.CWSerial = CWSerial()
-		self.CWSerial.StopFill()
-		self.CWSerial.StopRotation()
 
 		self.CWConstants = CWConstants
 		self.CWCLIDrawer = CWCLIDrawer(self.CWConstants)
+		
+		self.is_synched = False
 
 		self.start_count = 0
 		self.stop_count = 0
@@ -128,7 +128,7 @@ class CWDetection:
 	def GlassIsFull(self):
 		if self.stop_after_fill == False and self.stop_count == self.CWConstants.wait_frames_count:
 			self.CWConfigWindow.fillGlass(False)
-			self.CWSerial.StopFill()
+			self.is_synched = self.CWSerial.StopFill()
 			self.stop_after_fill = True
 			
 			# flag for next glass detection
@@ -143,7 +143,7 @@ class CWDetection:
 		if self.stop_after_fill == False and self.start_count == self.CWConstants.wait_frames_count * 3 and self.empty == True:
 			self.CWConfigWindow.fillGlass(True)
 			self.CWConfigWindow.rotatePlatform(False)
-			self.CWSerial.StartFill()
+			self.is_synched = self.CWSerial.StartFill()
 			self.start_count = 0
 			self.stop_count = 0
 
@@ -152,7 +152,7 @@ class CWDetection:
 			print ("=================Found side / Fill")			
 
 		self.CWConfigWindow.glasDetected(True)
-		self.CWSerial.StopRotation()	
+		self.is_synched = self.CWSerial.StopRotation()	
 		self.stop_after_fill = False
 		self.empty = True
 		
@@ -169,7 +169,7 @@ class CWDetection:
 			self.CWConfigWindow.glasDetected(False)
 			self.CWConfigWindow.rotatePlatform(True)
 			self.rotat_count = 0
-			self.CWSerial.StartRotation(0.0)
+			self.is_synched = self.CWSerial.StartRotation(0.0)
 			self.top = (0, self.CWConstants.h)
 
 			if DEBUG == True:
@@ -192,7 +192,7 @@ class CWDetection:
 				print ("=================Stop after fill")
 			
 			self.CWConfigWindow.rotatePlatform(True)
-			self.CWSerial.StartRotation(0.0)
+			self.is_synched = self.CWSerial.StartRotation(0.0)
 			
 			# counter for frames (waiting time before rotation)
 			self.stop_after_fill_count = self.stop_after_fill_count + 1
@@ -300,30 +300,35 @@ class CWDetection:
 		except:
 			if DEBUG == True:
 				print ("Rotate failed: ", sys.exc_info())
+				
 	def run(self):
 		capture = cv2.VideoCapture(0)
 		while True:
 			try:	
-				ret, self.img = capture.read()
+				# running, no error; else handshake
+				if self.is_synched == True:					
+					ret, self.img = capture.read()
 
-				if ret == True:
-					#cv2.imshow("Hi", self.img)					
-					#self.extractBarcode()				
-					self.rotateImage()
+					if ret == True:
+						#cv2.imshow("Hi", self.img)					
+						#self.extractBarcode()				
+						self.rotateImage()
 
-					#cv2.putText(self.img, str(self.bottom_foam[1]), (self.CWConstants.w/2 + 60, self.CWConstants.h/2), cv2.FONT_HERSHEY_PLAIN, 1.0, 255, thickness=1, lineType=cv2.CV_AA)
-					#y: y + h, x: x + w	
-					self.img = self.img[self.CWConstants.y: self.CWConstants.y + self.CWConstants.h, self.CWConstants.x: self.CWConstants.x + self.CWConstants.w]		
-					self.edgeDetection()
+						#cv2.putText(self.img, str(self.bottom_foam[1]), (self.CWConstants.w/2 + 60, self.CWConstants.h/2), cv2.FONT_HERSHEY_PLAIN, 1.0, 255, thickness=1, lineType=cv2.CV_AA)
+						#y: y + h, x: x + w	
+						self.img = self.img[self.CWConstants.y: self.CWConstants.y + self.CWConstants.h, self.CWConstants.x: self.CWConstants.x + self.CWConstants.w]		
+						self.edgeDetection()
 
-					#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
+						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
+				else:
+					self.is_synched = self.CWSerial.Handshake()
 
 			except TypeError:
 				if DEBUG == True:
 					print ("You have no \"glass\": ", sys.exc_info())
 		
 				self.CWConfigWindow.rotatePlatform(True)
-				self.CWSerial.StartRotation(0)
+				self.is_synched = self.CWSerial.StartRotation(0)
 
 			except:
 				capture = cv2.VideoCapture(0)
