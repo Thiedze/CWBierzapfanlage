@@ -7,10 +7,15 @@ Campuswoche 2014
 Serielle-Kommunikation zum steuern der Bierzapfanlage.
 """
 
-DEBUG = False
-
 import serial
-from enum import Enum
+import sys
+
+# Version of serial connection
+CONST_SERIAL_CWBOARD = 0
+CONST_SERIAL_RTSCTS = 1
+CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
+#CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
+
 
 # const confirm
 CONST_OK = 1
@@ -25,15 +30,20 @@ CONST_FILL_STOP = 'a'.decode('ascii')
 CONST_ROTATE_START = 'd'.decode('ascii')
 CONST_ROTATE_STOP = 's'.decode('ascii')
 
+DEBUG = True
+
 class CWSerial:	
 	def __init__(self):		
+		if DEBUG == True:
+			print "Init CWSerial"
 		try:		
 			self.ser = serial.Serial(
 			port='/dev/ttyUSB0', 
 			baudrate=9600, 
 			parity=serial.PARITY_ODD, 
 			stopbits=serial.STOPBITS_TWO,     
-			bytesize=serial.SEVENBITS )
+			bytesize=serial.SEVENBITS,
+			timeout=5 )
 			
 			if self.ser.isOpen() != True:
 					self.ser.open()
@@ -47,10 +57,10 @@ class CWSerial:
 
 	def StartRotation(self, secs):
 		try:
-			if self.serialVersion == CWSerialVersion.CWBOARD:
-				return StartRotationCWBOARD()
-			elif self.serialVersion == CWSerialVersion.RTSCTS:
-				return StartRotationRTSCTS()
+			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
+				return self.StartRotationCWBOARD()
+			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
+				return self.StartRotationRTSCTS()
 			else:
 				return False
 		except:			
@@ -70,10 +80,10 @@ class CWSerial:
 
 	def StopRotation(self):
 		try:
-			if self.serialVersion == CWSerialVersion.CWBOARD:
-				return StopRotationCWBOARD()
-			elif self.serialVersion == CWSerialVersion.RTSCTS:
-				return StopRotationRTSCTS()
+			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
+				return self.StopRotationCWBOARD()
+			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
+				return self.StopRotationRTSCTS()
 			else:
 				return False
 		except:			
@@ -91,10 +101,10 @@ class CWSerial:
 
 	def StartFill(self):
 		try:
-			if self.serialVersion == CWSerialVersion.CWBOARD:
-				return StartFillCWBOARD()
-			elif self.serialVersion == CWSerialVersion.RTSCTS:
-				return StartFillRTSCTS()
+			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
+				return self.StartFillCWBOARD()
+			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
+				return self.StartFillRTSCTS()
 			else:
 				return False
 		except:			
@@ -114,10 +124,10 @@ class CWSerial:
 	
 	def StopFill(self):
 		try:
-			if self.serialVersion == CWSerialVersion.CWBOARD:
-				return StopFillCWBOARD()
-			elif self.serialVersion == CWSerialVersion.RTSCTS:
-				return StopFillRTSCTS()
+			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
+				return self.StopFillCWBOARD()
+			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
+				return self.StopFillRTSCTS()
 			else:
 				return False
 		except:
@@ -143,10 +153,10 @@ class CWSerial:
 				
 	def Handshake(self):
 		try:
-			if self.serialVersion == CWSerialVersion.CWBOARD:
-				return HandshakeCWBOARD()
-			elif self.serialVersion == CWSerialVersion.RTSCTS:
-				return HandshakeRTSCTS()
+			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
+				return self.HandshakeCWBOARD()
+			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
+				return self.HandshakeRTSCTS()
 			else:
 				return False
 		except:			
@@ -156,8 +166,7 @@ class CWSerial:
 
 	def HandshakeCWBOARD(self):
 		# waiting for hs request from CW board
-		incomingByte = self.ReadByte();
-		if incomingByte = CONST_HS_AKAK:
+		if self.ReadByte() == CONST_HS_AKAK:
 			self.ser.write(CONST_HS_SYNC)
 			return self.ReadByte() == CONST_OK
 		else: 

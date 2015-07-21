@@ -321,7 +321,11 @@ class CWDetection:
 
 						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
 				else:
-					self.is_synched = self.CWSerial.Handshake()
+					try:
+						self.is_synched = self.CWSerial.Handshake()
+					except:
+						if DEBUG == True:
+							print ("CWSerial Handshake / SYNC fail: ", sys.exc_info())
 
 			except TypeError:
 				if DEBUG == True:

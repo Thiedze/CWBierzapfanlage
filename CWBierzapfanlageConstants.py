@@ -8,20 +8,12 @@ Konstanten der Bierzapfanlage.
 """
 
 import os.path
-from enum import Enum
 
 DEBUG = False
-
-class CWSerialVersion(Enum):
-	CWBOARD = 0
-	RTSCTS = 1
 
 class CWConstants:
 	def __init__(self):		
 		self.wait_frames_count = 3
-
-		# Version of serial connection
-		self.serialVersion = CWSerialVersion.RTSCTS
 
 		#Groesse des Bildes
 		self.w = 380
