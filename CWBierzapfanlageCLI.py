@@ -17,7 +17,7 @@ from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-DEBUG = True
+DEBUG = False
 
 class CWDetection:
 
@@ -310,6 +310,7 @@ class CWDetection:
 					ret, self.img = capture.read()
 
 					if ret == True:
+						
 						#cv2.imshow("Hi", self.img)					
 						#self.extractBarcode()				
 						self.rotateImage()
@@ -335,7 +336,7 @@ class CWDetection:
 				self.is_synched = self.CWSerial.StartRotation(0)
 
 			except:
-				capture = cv2.VideoCapture(0)
+				#capture = cv2.VideoCapture(0)
 				if DEBUG == True:
 					print ("No Cam: ", sys.exc_info()[0])
 
