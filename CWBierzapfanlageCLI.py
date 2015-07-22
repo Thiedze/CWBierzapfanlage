@@ -350,7 +350,7 @@ class CWDetection:
 
 						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
 				else:
-					Handshake()
+					self.Handshake()
 
 			except TypeError:
 				if DEBUG == True:
@@ -358,20 +358,14 @@ class CWDetection:
 				self.StartRotation()
 
 			except:
-				#capture = cv2.VideoCapture(0)
 				if DEBUG == True:
 					print ("Main loop exception: ", sys.exc_info())
-
-				#self.CWSerial.Close()
-				#print 'Start script'
-				#start_new_thread(subprocess.call(['./CWBierzapfanlage.py']))
-				#print 'Kill myself'
-				#sys.exit(0)				
 		
 			# Listen for ESC key
 			c = cv2.waitKey(7) % 0x100
 			#if c == 27:
 			if self.CWConstants.stopProgram == True:
+				self.StartRotation()
 				self.CWSerial.Close()
 				capture.release()
 				break
