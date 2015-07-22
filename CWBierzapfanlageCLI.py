@@ -354,15 +354,13 @@ class CWDetection:
 
 			except TypeError:
 				if DEBUG == True:
-					print ("You have no \"glass\": ", sys.exc_info())
-		
-				self.CWConfigWindow.rotatePlatform(True)
-				self.is_synched = self.CWSerial.StartRotation(0)
+					print ("You have no \"glass\": ", sys.exc_info())		
+				self.StartRotation()
 
 			except:
 				#capture = cv2.VideoCapture(0)
 				if DEBUG == True:
-					print ("No Cam: ", sys.exc_info()[0])
+					print ("Main loop exception: ", sys.exc_info())
 
 				#self.CWSerial.Close()
 				#print 'Start script'
