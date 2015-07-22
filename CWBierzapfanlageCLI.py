@@ -98,11 +98,14 @@ class CWDetection:
 
 	def BottomFoamLine(self, lowThreshold, ratio, kernel_size):
 		try:
-			self.bottom_foam = (0, self.CWConstants.h)		
+			self.bottom_foam = (0, self.CWConstants.h)	
+			
+			# crop image for better detection: within limits, below top line
+			cropped_img = self.gray_only[self.top[1]:self.CWConstants.h, self.CWConstants.left_border_ignor:self.CWConstants.right_border_ignor]
 			
 			#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
 			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
-			in_range_dst = cv2.inRange(self.gray_only, numpy.asarray(40), numpy.asarray(70), color_mask)
+			in_range_dst = cv2.inRange(cropped_img, numpy.asarray(40), numpy.asarray(70), color_mask)
 
 			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(8,8))
 			in_range_dst = cv2.erode(in_range_dst, kernel)
