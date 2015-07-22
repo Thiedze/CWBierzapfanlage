@@ -132,9 +132,7 @@ class CWDetection:
 			self.CWConfigWindow.fillGlass(False)
 			if DEBUG == True:
 					print ("--> StopFill")
-			self.is_synched = self.CWSerial.StopFill()
-			# flag for next glass detection
-			self.is_glass_detection_active = False
+			self.is_synched = self.CWSerial.StopFill()			
 			# reset start / stop counters			
 			self.start_count = 0
 			self.stop_count = 0	
@@ -185,7 +183,7 @@ class CWDetection:
 			and self.right[0] != self.CWConstants.middle_right_point):
 			self.CWConfigWindow.glasDetected(True)
 			if DEBUG == True:
-					print ("GlassDetected: True")
+					print ("GlassDetected: True")			
 			return True
 		else:
 			self.CWConfigWindow.glasDetected(False)
@@ -199,8 +197,10 @@ class CWDetection:
 			if self.GlassDetected():			
 				self.StopRotation()
 				if self.GlassFilled():
-					self.current_full_skip_count += 1				
 					self.StopFilling()
+					self.current_full_skip_count += 1									
+					# flag for next glass detection
+					self.is_glass_detection_active = False
 					self.StartRotation()
 				else:
 					self.current_full_skip_count = 0
