@@ -101,7 +101,7 @@ class CWDetection:
 			self.bottom_foam = (0, self.CWConstants.h)	
 			
 			# crop image for better detection: within limits, below top line
-			cropped_img = self.gray_only[self.top[1]:self.CWConstants.h, self.CWConstants.left_border_ignor:self.CWConstants.right_border_ignor]
+			cropped_img = self.gray_only[0:self.CWConstants.h, self.CWConstants.middle_left_point:self.CWConstants.middle_right_point]
 			
 			#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
 			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
@@ -169,9 +169,9 @@ class CWDetection:
 					print ("GlassFilled: False")
 			return False
 				
-	def StartRotation(self):
+	def StartRotation(self, instantStart=False):
 		self.rotat_count = self.rotat_count + 1
-		if self.rotat_count == self.CWConstants.wait_frames_count * 2:							
+		if instantStart or self.rotat_count == self.CWConstants.wait_frames_count * 2:							
 			self.CWConfigWindow.rotatePlatform(True)
 			if DEBUG == True:
 					print ("--> StartRotation")
@@ -217,6 +217,8 @@ class CWDetection:
 	def StandbyDetection(self):
 		# new synch (handshake) required after too many full glasses w/o refill
 		if self.current_full_skip_count >= self.CWConstants.limit_full_glass_detection:
+			self.current_full_skip_count = 0
+			self.StartRotation(True)
 			self.is_synched = False
 			if DEBUG == True:
 					print ("StandbyDetection: Going into standby mode.")

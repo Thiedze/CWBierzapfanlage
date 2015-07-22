@@ -14,8 +14,8 @@ import time
 # Version of serial connection
 CONST_SERIAL_CWBOARD = 0
 CONST_SERIAL_RTSCTS = 1
-#CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
-CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
+CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
+#CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
 
 
 # const confirm
@@ -192,10 +192,11 @@ class CWSerial:
 			if DEBUG == True:			
 				print("===========================")
 
-			incomingByte = self.ReadByte()
 			for count in range(500):
 				incomingByte = self.ReadByte()
+				print ("SERIAL: Handshake count", count, incomingByte)
 				if incomingByte == CONST_OK:
+					print ("SERIAL: Handshake ok")
 					break
 
 			return incomingByte == CONST_OK
