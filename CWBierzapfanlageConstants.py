@@ -13,7 +13,11 @@ DEBUG = False
 
 class CWConstants:
 	def __init__(self):		
+		# basic factor for wait frames (before / after fill)
 		self.wait_frames_count = 3
+		
+		# inactive limit - full glasses
+		self.limit_full_glass_detection = 12
 
 		#Groesse des Bildes
 		self.w = 380

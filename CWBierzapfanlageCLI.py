@@ -17,7 +17,7 @@ from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-DEBUG = False
+DEBUG = True
 
 class CWDetection:
 
@@ -28,19 +28,19 @@ class CWDetection:
 		self.CWConstants = CWConstants
 		self.CWCLIDrawer = CWCLIDrawer(self.CWConstants)
 		
+		# serial synchronization status 
 		self.is_synched = False
 
+		# counter for frame delays
 		self.start_count = 0
 		self.stop_count = 0
 		self.rotat_count = 0
+		
+		# process variables
 		self.is_glass_detection_active = True
-		self.stop_after_fill = False
-		self.stop_after_fill_count = 0
-		self.full = True
+		self.current_full_skip_count = 0
+		
 		self.white_pixel_in_percent = 0
-		self.full = False
-		self.empty = True
-		#self.ready_to_fill = True
 
 		self.top = (0, self.CWConstants.h)
 		self.left = (self.CWConstants.middle_right_point,0)
@@ -125,92 +125,106 @@ class CWDetection:
 		except: 
 			print("BottomFoamLine: ", sys.exc_info())
 
-	def GlassIsFull(self):
-		if self.stop_after_fill == False and self.stop_count == self.CWConstants.wait_frames_count:
+	def StopFilling(self):
+		# increase stop counter, make sure full glass is recognized
+		self.stop_count = self.stop_count + 1
+		if self.stop_count == self.CWConstants.wait_frames_count:
 			self.CWConfigWindow.fillGlass(False)
+			if DEBUG == True:
+					print ("--> StopFill")
 			self.is_synched = self.CWSerial.StopFill()
-			self.stop_after_fill = True
-			
 			# flag for next glass detection
 			self.is_glass_detection_active = False
-			
+			# reset start / stop counters			
 			self.start_count = 0
 			self.stop_count = 0	
 			
-	def GlassIsEmpty(self):
+	def StartFilling(self):
+		# increase start counter, make sure glass is recognized and not full
 		self.start_count = self.start_count + 1
-
-		if self.stop_after_fill == False and self.start_count == self.CWConstants.wait_frames_count * 3 and self.empty == True:
-			self.CWConfigWindow.fillGlass(True)
-			self.CWConfigWindow.rotatePlatform(False)
+		if self.start_count == self.CWConstants.wait_frames_count * 3:
+			self.CWConfigWindow.fillGlass(True)		
+			if DEBUG == True:
+					print ("--> StartFill")	
 			self.is_synched = self.CWSerial.StartFill()
 			self.start_count = 0
 			self.stop_count = 0
-
-	def GlassIsInRange(self):
+			
+	def StopRotation(self):
+		self.CWConfigWindow.rotatePlatform(False)
 		if DEBUG == True:
-			print ("=================Found side / Fill")			
+					print ("--> StopRotation")
+		self.is_synched = self.CWSerial.StopRotation()			
 
-		self.CWConfigWindow.glasDetected(True)
-		self.is_synched = self.CWSerial.StopRotation()	
-		self.stop_after_fill = False
-		self.empty = True
-		
+	def GlassFilled(self):
 		#Kontrolle, ob die Schaum- oder Bierkante die definierte Hoehe erreicht hat
 		if  self.bottom_foam[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line or self.bottom_beer[1] - self.top[1] <= self.CWConstants.distance_top_to_bottom_line:
 			self.stop_count = self.stop_count + 1
-			self.GlassIsFull()
+			if DEBUG == True:
+					print ("GlassFilled: True")
+			return True
 		else:
-			self.GlassIsEmpty()
+			if DEBUG == True:
+					print ("GlassFilled: False")
+			return False
 				
-	def NoGlassFound(self):
+	def StartRotation(self):
 		self.rotat_count = self.rotat_count + 1
-		if self.rotat_count == self.CWConstants.wait_frames_count * 2:				
-			self.CWConfigWindow.glasDetected(False)
+		if self.rotat_count == self.CWConstants.wait_frames_count * 2:							
 			self.CWConfigWindow.rotatePlatform(True)
+			if DEBUG == True:
+					print ("--> StartRotation")
 			self.rotat_count = 0
 			self.is_synched = self.CWSerial.StartRotation(0.0)
 			self.top = (0, self.CWConstants.h)
-
-			if DEBUG == True:
-				if self.is_glass_detection_active == True: 
-					print ("=================Found no side")
-				else:
-					print("=================Same glass")
-
-	def HitDetection(self):
-		#Linke und rechte Linie muessen erkannt worden sein
-		if (self.is_glass_detection_active == True 
+	
+	def GlassDetected(self):
+		# Erkennung aktiv + Linke und rechte Linie muessen erkannt worden sein
+		if (self.is_glass_detection_active == True
 			and self.left[0] != self.CWConstants.middle_left_point 
 			and self.right[0] != self.CWConstants.middle_right_point):
-			self.GlassIsInRange()
-		else:
-			self.NoGlassFound()
-				
-		if self.stop_after_fill == True:
+			self.CWConfigWindow.glasDetected(True)
 			if DEBUG == True:
-				print ("=================Stop after fill")
+					print ("GlassDetected: True")
+			return True
+		else:
+			self.CWConfigWindow.glasDetected(False)
+			if DEBUG == True:
+					print ("GlassDetected: False", ("No glass" if self.is_glass_detection_active else "Same glass"))
+			return False
 			
-			self.CWConfigWindow.rotatePlatform(True)
-			self.is_synched = self.CWSerial.StartRotation(0.0)
-			
-			# counter for frames (waiting time before rotation)
-			self.stop_after_fill_count = self.stop_after_fill_count + 1
-			
-			if self.stop_after_fill_count == self.CWConstants.wait_frames_count: # and self.ready_to_fill == False:
-				self.stop_after_fill = False
-				self.empty = True
-				self.stop_after_fill_count = 0
-				if DEBUG == True:
-					print ("=================Continue after fill")
-
+	def HitDetection(self):		
+		# process for glass detection and filling
+		try:
+			if self.GlassDetected():			
+				self.StopRotation()
+				if self.GlassFilled():
+					self.current_full_skip_count += 1				
+					self.StopFilling()
+					self.StartRotation()
+				else:
+					self.current_full_skip_count = 0
+					self.StartFilling()				
+			else:
+				self.StartRotation()
+		except:
+			if DEBUG == True:
+				print ("HitDetection fail: ", sys.exc_info())
+				
+	def StandbyDetection(self):
+		# new synch (handshake) required after too many full glasses w/o refill
+		if self.current_full_skip_count >= self.CWConstants.limit_full_glass_detection:
+			self.is_synched = False
+			if DEBUG == True:
+					print ("StandbyDetection: Going into standby mode.")
+				
 	def GetVerticalLines(self, prepared_frame):
 		# image, rho, theta, thres, lines, lenght, stn
 		return cv2.HoughLinesP(prepared_frame, 1, math.pi , 1, None, 10, 0)
+		
 	def GetHorizontalLines(self, prepared_frame):
 		# image, rho, theta, thres, lines, lenght, stn
 		return cv2.HoughLinesP(prepared_frame, 1, math.pi / 2, 1,    None,  10,   0)
-
 
 	def PrepareFrame(self, lowThreshold, ratio, kernel_size):
 		detected_edges = []
@@ -257,12 +271,7 @@ class CWDetection:
 			if DEBUG == True:
 				print (sys.exc_info())
 
-		try:
-			self.HitDetection()
-		except:
-			if DEBUG == True:
-				print ("HitDetection fail: ", sys.exc_info())
-
+	def DrawOriginal(self):
 		try:
 			self.CWCLIDrawer.Draw(image=self.img, left=self.left, right=self.right, top=self.top, bottom_foam=self.bottom_foam)
 		except:
@@ -306,7 +315,7 @@ class CWDetection:
 		while True:
 			try:	
 				# running, no error; else handshake
-				if self.is_synched == True:					
+				if self.is_synched:					
 					ret, self.img = capture.read()
 
 					if ret == True:
@@ -318,7 +327,17 @@ class CWDetection:
 						#cv2.putText(self.img, str(self.bottom_foam[1]), (self.CWConstants.w/2 + 60, self.CWConstants.h/2), cv2.FONT_HERSHEY_PLAIN, 1.0, 255, thickness=1, lineType=cv2.CV_AA)
 						#y: y + h, x: x + w	
 						self.img = self.img[self.CWConstants.y: self.CWConstants.y + self.CWConstants.h, self.CWConstants.x: self.CWConstants.x + self.CWConstants.w]		
+						
+						# get lines for detection
 						self.edgeDetection()
+						
+						# start detection process
+						self.HitDetection()
+						# go into standby mode (waiting for hs) after full glass limit
+						self.StandbyDetection()
+						
+						if DEBUG == True:
+							self.DrawOriginal()
 
 						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
 				else:
