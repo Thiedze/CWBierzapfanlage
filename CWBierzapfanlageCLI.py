@@ -309,6 +309,15 @@ class CWDetection:
 		except:
 			if DEBUG == True:
 				print ("Rotate failed: ", sys.exc_info())
+	
+	def Handshake(self):
+		try:
+			self.is_synched = self.CWSerial.Handshake()
+			if DEBUG == True:
+				print ("Handshake", self.is_synched)
+		except:
+			if DEBUG == True:
+				print ("CWSerial Handshake / SYNC fail: ", sys.exc_info())
 				
 	def run(self):
 		capture = cv2.VideoCapture(0)
@@ -341,11 +350,7 @@ class CWDetection:
 
 						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
 				else:
-					try:
-						self.is_synched = self.CWSerial.Handshake()
-					except:
-						if DEBUG == True:
-							print ("CWSerial Handshake / SYNC fail: ", sys.exc_info())
+					Handshake()
 
 			except TypeError:
 				if DEBUG == True:
