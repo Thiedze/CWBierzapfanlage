@@ -57,13 +57,15 @@ class CWSerial:
 			
 			if self.ser.isOpen() != True:
 				self.ser.open()
-				self.ser.flushInput()
-				self.set.flushOutput()
-
+				self.FlushSerial()			
 		except:
 			if DEBUG == True:
 				print "Can't open serial port!"
-				
+	
+	def FlushSerial(self):
+		self.ser.flushInput()
+		self.ser.flushOutput()
+	
 	def ReadByte(self):
 		incomingByte = self.ser.read().decode('ascii')
 		if DEBUG == True:
@@ -89,6 +91,7 @@ class CWSerial:
 			return False
 		
 	def StartRotationCWBOARD(self):
+		self.FlushSerial()
 		self.WriteByte(CONST_ROTATE_START)
 		return self.ReadByte() == CONST_OK
 		
@@ -112,6 +115,7 @@ class CWSerial:
 			return False
 		
 	def StopRotationCWBOARD(self):
+		self.FlushSerial()
 		self.WriteByte(CONST_ROTATE_STOP)
 		return self.ReadByte() == CONST_OK
 		
@@ -133,6 +137,7 @@ class CWSerial:
 			return False
 		
 	def StartFillCWBOARD(self):
+		self.FlushSerial()
 		self.WriteByte(CONST_FILL_START)		
 		return self.ReadByte() == CONST_OK
 		
@@ -156,6 +161,7 @@ class CWSerial:
 			return False
 				
 	def StopFillCWBOARD(self):
+		self.FlushSerial()
 		self.WriteByte(CONST_FILL_STOP)
 		return self.ReadByte() == CONST_OK
 		
@@ -185,7 +191,7 @@ class CWSerial:
 			return False
 
 	def HandshakeCWBOARD(self):
-		self.ser.flushInput()
+		self.FlushSerial()
 		# waiting for hs request from CW board
 		if self.ReadByte() == CONST_HS_AK:
 			self.WriteByte(CONST_HS_SYNC)
