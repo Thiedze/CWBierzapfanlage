@@ -24,6 +24,9 @@ class CWConstants:
 		self.h = 330
 		self.x = 140
 		self.y = 100
+		
+		# pixels from border lines for foam recognition
+		self.foam_recognition_limit = 5
 
 		#self.img = self.img[100:400, 140:520]
 

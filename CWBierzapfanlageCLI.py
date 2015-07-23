@@ -95,19 +95,38 @@ class CWDetection:
 				continue
 		except:
 			print("TopLine fail: ", sys.exc_info())
+			
+	def LinesRecognized(self):
+		if (self.top[1] < self.CWConstants.h 
+			and self.left[0] < self.CWConstants.middle_left_point
+			and self.right[0] > self.CWConstants.middle_right_point):
+			return True
+		else:
+			return False
 
 	def BottomFoamLine(self, lowThreshold, ratio, kernel_size):
 		try:
 			self.bottom_foam = (0, self.CWConstants.h)	
 			
-			# crop image for better detection: within limits, below top line
-			cropped_img = self.gray_only[0:self.CWConstants.h, self.CWConstants.middle_left_point:self.CWConstants.middle_right_point]
+			# use gray_only if one line is not correctly recognized
+			cropped_img = self.gray_only
 			
+			# calculate area: within glass, exclusive limited middle area			
+			if self.LinesRecognized():
+				# cut borders for false recognition
+				left_x = self.left[0] + self.CWConstants.foam_recognition_limit				
+				right_x = self.right[0] - self.CWConstants.foam_recognition_limit
+				top_y = self.top[1] + self.CWConstants.foam_recognition_limit
+				left_area = cropped_img[top_y:self.CWConstants.h, left_x:self.CWConstants.middle_left_point]
+				right_area = cropped_img[top_y:self.CWConstants.h, self.CWConstants.middle_right_point:right_x]
+				# append right area horizontally to left
+				cropped_img = numpy.concatenate((left_area, right_area), axis=1)
+						
 			#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
 			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
 			in_range_dst = cv2.inRange(cropped_img, numpy.asarray(40), numpy.asarray(70), color_mask)
 
-			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(8,8))
+			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
 			in_range_dst = cv2.erode(in_range_dst, kernel)
 
 			if DEBUG == True:
@@ -259,19 +278,17 @@ class CWDetection:
 			if vertical_lines != None:					
 				self.LeftLine(vertical_lines)
 				self.RightLine(vertical_lines)
+				if horizontal_lines != None:					
+					self.TopLine(horizontal_lines)
+					# find foam line, requires left, right and top line!
+					self.BottomFoamLine(lowThreshold, ratio, kernel_size)					
+				elif DEBUG == True:
+					print("horizontal_lines", type(horizontal_lines))
 			elif DEBUG == True:
-				print("vertical_lines", type(vertical_lines))
-			if horizontal_lines != None:					
-				self.TopLine(horizontal_lines)
-			elif DEBUG == True:
-				print("horizontal_lines", type(horizontal_lines))
-			#self.BottomBeerLine(lowThreshold, ratio, kernel_size)
-			self.BottomFoamLine(lowThreshold, ratio, kernel_size)
-			
+				print("vertical_lines", type(vertical_lines))			
 		except TypeError:
 			if DEBUG == True:
-				print ("LineSearching fail: ", sys.exc_info())		
-		
+				print ("LineSearching fail: ", sys.exc_info())				
 		except:
 			if DEBUG == True:
 				print (sys.exc_info())
