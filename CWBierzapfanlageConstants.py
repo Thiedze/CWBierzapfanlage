@@ -14,7 +14,7 @@ DEBUG = False
 class CWConstants:
 	def __init__(self):		
 		# basic factor for wait frames (before / after fill)
-		self.wait_frames_count = 3
+		self.wait_frames_count = 0
 		
 		# inactive limit - full glasses
 		self.limit_full_glass_detection = 12
@@ -26,7 +26,7 @@ class CWConstants:
 		self.y = 100
 		
 		# pixels from border lines for foam recognition
-		self.foam_recognition_limit = 5
+		self.foam_recognition_limit = 20
 
 		#self.img = self.img[100:400, 140:520]
 
