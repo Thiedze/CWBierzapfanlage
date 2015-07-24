@@ -17,7 +17,10 @@ from CWBierzapfanlageSerial import CWSerial
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-DEBUG = True
+DEBUG = False
+DEBUG_IMG = False
+DEBUG_SERIAL = False
+DEBUG_ORIGINAL = False
 
 class CWDetection:
 
@@ -30,6 +33,7 @@ class CWDetection:
 		
 		# serial synchronization status 
 		self.is_synched = False
+		self.set_stop = False
 
 		# counter for frame delays
 		self.start_count = 0
@@ -108,28 +112,30 @@ class CWDetection:
 		try:
 			self.bottom_foam = (0, self.CWConstants.h)	
 			
-			# use gray_only if one line is not correctly recognized
-			cropped_img = self.gray_only
+			# default values			
+			left_x = self.CWConstants.left_border_ignor
+			right_x = self.CWConstants.right_border_ignor
+			top_y = 0
 			
 			# calculate area: within glass, exclusive limited middle area			
 			if self.LinesRecognized():
 				# cut borders for false recognition
 				left_x = self.left[0] + self.CWConstants.foam_recognition_limit				
 				right_x = self.right[0] - self.CWConstants.foam_recognition_limit
-				top_y = self.top[1] + self.CWConstants.foam_recognition_limit
-				left_area = cropped_img[top_y:self.CWConstants.h, left_x:self.CWConstants.middle_left_point]
-				right_area = cropped_img[top_y:self.CWConstants.h, self.CWConstants.middle_right_point:right_x]
-				# append right area horizontally to left
-				cropped_img = numpy.concatenate((left_area, right_area), axis=1)
-						
+				#top_y = self.top[1] + self.CWConstants.foam_recognition_limit
+										
 			#Erstellen der Farbmaske, aus dem Bild rausrechnen, Kanten erkennen, Konturen finden
 			color_mask = numpy.zeros((self.CWConstants.h,self.CWConstants.w), numpy.uint8)
-			in_range_dst = cv2.inRange(cropped_img, numpy.asarray(40), numpy.asarray(70), color_mask)
+			in_range_dst = cv2.inRange(self.gray_only, numpy.asarray(40), numpy.asarray(70), color_mask)
 
 			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
-			in_range_dst = cv2.erode(in_range_dst, kernel)
+			in_range_dst = cv2.erode(in_range_dst, kernel)			
 
-			if DEBUG == True:
+			left_area = in_range_dst[top_y:self.CWConstants.h, left_x:self.CWConstants.middle_left_point]
+			right_area =in_range_dst[top_y:self.CWConstants.h, self.CWConstants.middle_right_point:right_x]
+			# append right area horizontally to left
+			in_range_dst = numpy.concatenate((left_area, right_area), axis=1)
+			if DEBUG_IMG == True:
 				cv2.imshow("Foam" , in_range_dst)
 
 			contours, hierarchy = cv2.findContours(in_range_dst,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -142,7 +148,9 @@ class CWDetection:
 					x,y,w,h = cv2.boundingRect(cnt)
 					#Es wird geschaut, ob die gefundene Kontur(Linie)
 					#weiter oben liegt als die aktuelle :and: groesser als 40 Pixel breit ist	
-					if y < self.bottom_foam[1] and w > 1 and  (x > self.CWConstants.left_border_ignor or x < self.CWConstants.right_border_ignor) and (x < self.CWConstants.middle_left_point or x > self.CWConstants.middle_right_point):
+					if (y < self.bottom_foam[1] and w > 1):
+						#and  (x > left_x or x < right_x) 
+						#and (x < self.CWConstants.middle_left_point or x > self.CWConstants.middle_right_point)):
 						self.bottom_foam = (x, y)
 		except: 
 			print("BottomFoamLine: ", sys.exc_info())
@@ -150,9 +158,9 @@ class CWDetection:
 	def StopFilling(self):
 		# increase stop counter, make sure full glass is recognized
 		self.stop_count = self.stop_count + 1
-		if self.stop_count == self.CWConstants.wait_frames_count:
+		if self.stop_count >= self.CWConstants.wait_frames_count:
 			self.CWConfigWindow.fillGlass(False)
-			if DEBUG == True:
+			if DEBUG_SERIAL == True:
 					print ("--> StopFill")
 			self.is_synched = self.CWSerial.StopFill()			
 			# reset start / stop counters			
@@ -162,9 +170,9 @@ class CWDetection:
 	def StartFilling(self):
 		# increase start counter, make sure glass is recognized and not full
 		self.start_count = self.start_count + 1
-		if self.start_count == self.CWConstants.wait_frames_count * 3:
+		if self.start_count >= 2 + self.CWConstants.wait_frames_count * 3:
 			self.CWConfigWindow.fillGlass(True)		
-			if DEBUG == True:
+			if DEBUG_SERIAL == True:
 					print ("--> StartFill")	
 			self.is_synched = self.CWSerial.StartFill()
 			self.start_count = 0
@@ -172,7 +180,7 @@ class CWDetection:
 			
 	def StopRotation(self):
 		self.CWConfigWindow.rotatePlatform(False)
-		if DEBUG == True:
+		if DEBUG_SERIAL == True:
 					print ("--> StopRotation")
 		self.is_synched = self.CWSerial.StopRotation()			
 
@@ -190,9 +198,9 @@ class CWDetection:
 				
 	def StartRotation(self, instantStart=False):
 		self.rotat_count = self.rotat_count + 1
-		if instantStart or self.rotat_count == self.CWConstants.wait_frames_count * 2:							
+		if instantStart or self.rotat_count >= self.CWConstants.wait_frames_count * 2:							
 			self.CWConfigWindow.rotatePlatform(True)
-			if DEBUG == True:
+			if DEBUG_SERIAL == True:
 					print ("--> StartRotation")
 			self.rotat_count = 0
 			self.is_synched = self.CWSerial.StartRotation(0.0)
@@ -218,6 +226,7 @@ class CWDetection:
 		try:
 			if self.GlassDetected():			
 				self.StopRotation()
+				self.set_stop = True
 				if self.GlassFilled():
 					self.StopFilling()
 					self.current_full_skip_count += 1									
@@ -239,7 +248,7 @@ class CWDetection:
 			self.current_full_skip_count = 0
 			self.StartRotation(True)
 			self.is_synched = False
-			if DEBUG == True:
+			if DEBUG_SERIAL == True:
 					print ("StandbyDetection: Going into standby mode.")
 				
 	def GetVerticalLines(self, prepared_frame):
@@ -264,7 +273,7 @@ class CWDetection:
 		detected_edges.append(cv2.Canny(self.gray_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size))
 		detected_edges.append(cv2.Canny(self.gray_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size))
 
-		if DEBUG == True:
+		if DEBUG_IMG == True:
 			cv2.imshow("Gray Vertical", detected_edges[0])
 			cv2.imshow("Gray Horizontal", detected_edges[1])
 
@@ -300,7 +309,7 @@ class CWDetection:
 			if DEBUG == True:			
 				print ("Draw fail: ", sys.exc_info())
 			
-		if DEBUG == True:
+		if DEBUG_ORIGINAL == True:
 			cv2.imshow("Original", self.img)
 
 	'''def extractBarcode(self):
@@ -335,7 +344,7 @@ class CWDetection:
 	def Handshake(self):
 		try:
 			self.is_synched = self.CWSerial.Handshake()
-			if DEBUG == True:
+			if DEBUG_SERIAL == True:
 				print ("Handshake", self.is_synched)
 		except:
 			if DEBUG == True:
@@ -367,8 +376,11 @@ class CWDetection:
 						# go into standby mode (waiting for hs) after full glass limit
 						self.StandbyDetection()
 						
-						if DEBUG == True:
+						if DEBUG_ORIGINAL == True:						
 							self.DrawOriginal()
+							if self.set_stop:
+								#raw_input("STOP")
+								self.set_stop = False
 
 						#cv2.putText(self.img,"Hello World!!!", (self.CWConstants.w/2, self.CWConstants.h/2), cv2.FONT_HERSHEY_SIMPLEX, 2, 255)
 				else:

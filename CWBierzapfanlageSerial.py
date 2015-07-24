@@ -52,8 +52,7 @@ class CWSerial:
 				baudrate=9600, 
 				parity=serial.PARITY_ODD, 
 				stopbits=serial.STOPBITS_TWO,     
-				bytesize=serial.SEVENBITS,
-				timeout=5 )
+				bytesize=serial.SEVENBITS)
 			
 			if self.ser.isOpen() != True:
 				self.ser.open()
@@ -65,6 +64,8 @@ class CWSerial:
 	def FlushSerial(self):
 		self.ser.flushInput()
 		self.ser.flushOutput()
+		if DEBUG == True:
+			print "FlushSerial"
 	
 	def ReadByte(self):
 		incomingByte = self.ser.read().decode('ascii')
@@ -200,9 +201,11 @@ class CWSerial:
 
 			for count in range(500):
 				incomingByte = self.ReadByte()
-				print ("SERIAL: Handshake count", count, incomingByte)
+				if DEBUG == True:
+					print ("SERIAL: Handshake count", count, incomingByte)
 				if incomingByte == CONST_OK:
-					print ("SERIAL: Handshake ok")
+					if DEBUG == True:
+						print ("SERIAL: Handshake ok")
 					break
 
 			return incomingByte == CONST_OK
