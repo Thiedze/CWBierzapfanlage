@@ -3,7 +3,7 @@
 import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-from CWBierzapfanlageGUI import CWConfigWindow
+from CWBierzapfanlageGUIManager import CWBierzapfanlageGUIManager
 from CWBierzapfanlageCLI import CWDetection
 from CWBierzapfanlageConstants import CWConstants
 from CWBierzapfanlageProfileManager import CWProfileManager
@@ -25,14 +25,20 @@ if DEBUG == True:
 	print "--- CWProfileManager created ---"
 
 #Init des ConfigWindows (Einstellen/Aendern und Speichern von Configs)
-CWConfigWindow = CWConfigWindow(CWConstants, CWProfileManager)
-if DEBUG == True:
-	print "--- CWConfigWindow created ---"
+
+#CWConfigWindow = CWConfigWindow(CWConstants, CWProfileManager)
+#if DEBUG == True:
+#	print "--- CWConfigWindow created ---"
+#
+#Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
+#CWDetection = CWDetection(CWConstants, CWConfigWindow)
+#if DEBUG == True:
+#	print "--- CWDetection created ---"
+
+CWBierzapfanlageGUIManager = CWBierzapfanlageGUIManager(CWConstants, CWProfileManager)
 
 #Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
-CWDetection = CWDetection(CWConstants, CWConfigWindow)
-if DEBUG == True:
-	print "--- CWDetection created ---"
+CWDetection = CWDetection(CWConstants, CWBierzapfanlageGUIManager)
 
 if DEBUG == True:
 	print "--- Run detection ---"

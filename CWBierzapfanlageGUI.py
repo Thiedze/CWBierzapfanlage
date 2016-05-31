@@ -1,239 +1,250 @@
-#!/usr/bin/pyhton
+# -*- coding: utf-8 -*-
 
-"""
-Sebastian Thiems 2014 
+# Form implementation generated from reading ui file 'CWBierzapfanlage.ui'
+#
+# Created: Wed Jul 22 18:35:57 2015
+#      by: PyQt4 UI code generator 4.10.2
+#
+# WARNING! All changes made in this file will be lost!
 
-GUI fuer die Automatische-Bierzapfanlage
-"""
+from PyQt4 import QtCore, QtGui
 
-import sys
-from PyQt4 import QtGui
-from PyQt4 import QtCore
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from CWBierzapfanlageConstants import CWConstants
-from CWBierzapfanlageProfileManager import CWProfileManager
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
 
-DEBUG = False
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
-class Button(QtGui.QWidget):
-	def __init__(self,parent=None,callback=None,text="New Button",x=0,y=0,w=60,h=30):
-		QtGui.QWidget.__init__(self, parent)
-		self.button = QtGui.QPushButton(text, parent)
-		self.button.setGeometry(x, y, w, h)
-		
-		if text == "Close":
-			self.button.connect(self.button, QtCore.SIGNAL('clicked()'), QtGui.qApp, callback)
-		else:
-			self.button.connect(self.button, QtCore.SIGNAL('clicked()'), callback)
+class Ui_CWBierzapfanlageGUI(object):
+    def setupUi(self, CWBierzapfanlageGUI):
+        CWBierzapfanlageGUI.setObjectName(_fromUtf8("CWBierzapfanlageGUI"))
+        CWBierzapfanlageGUI.resize(612, 685)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(3)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(CWBierzapfanlageGUI.sizePolicy().hasHeightForWidth())
+        CWBierzapfanlageGUI.setSizePolicy(sizePolicy)
+        self.centralwidget = QtGui.QWidget(CWBierzapfanlageGUI)
+        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+        self.gridLayout_4 = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
+        self.btnExit = QtGui.QPushButton(self.centralwidget)
+        self.btnExit.setObjectName(_fromUtf8("btnExit"))
+        self.gridLayout_4.addWidget(self.btnExit, 4, 0, 1, 1)
+        self.tabWidget = QtGui.QTabWidget(self.centralwidget)
+        self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
+        self.tabSetting = QtGui.QWidget()
+        self.tabSetting.setObjectName(_fromUtf8("tabSetting"))
+        self.verticalLayout = QtGui.QVBoxLayout(self.tabSetting)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.lblDefineDetectionArea = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblDefineDetectionArea.sizePolicy().hasHeightForWidth())
+        self.lblDefineDetectionArea.setSizePolicy(sizePolicy)
+        self.lblDefineDetectionArea.setAutoFillBackground(False)
+        self.lblDefineDetectionArea.setScaledContents(False)
+        self.lblDefineDetectionArea.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.lblDefineDetectionArea.setObjectName(_fromUtf8("lblDefineDetectionArea"))
+        self.verticalLayout.addWidget(self.lblDefineDetectionArea)
+        self.hlLeftLeftBorder = QtGui.QHBoxLayout()
+        self.hlLeftLeftBorder.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
+        self.hlLeftLeftBorder.setObjectName(_fromUtf8("hlLeftLeftBorder"))
+        self.lblLeftLeftBorder = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblLeftLeftBorder.sizePolicy().hasHeightForWidth())
+        self.lblLeftLeftBorder.setSizePolicy(sizePolicy)
+        self.lblLeftLeftBorder.setObjectName(_fromUtf8("lblLeftLeftBorder"))
+        self.hlLeftLeftBorder.addWidget(self.lblLeftLeftBorder)
+        self.hsLeftLeftBorder = QtGui.QSlider(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.hsLeftLeftBorder.sizePolicy().hasHeightForWidth())
+        self.hsLeftLeftBorder.setSizePolicy(sizePolicy)
+        self.hsLeftLeftBorder.setOrientation(QtCore.Qt.Horizontal)
+        self.hsLeftLeftBorder.setObjectName(_fromUtf8("hsLeftLeftBorder"))
+        self.hlLeftLeftBorder.addWidget(self.hsLeftLeftBorder)
+        self.verticalLayout.addLayout(self.hlLeftLeftBorder)
+        self.hlLeftRightBorder = QtGui.QHBoxLayout()
+        self.hlLeftRightBorder.setObjectName(_fromUtf8("hlLeftRightBorder"))
+        self.lblLeftRightBorder = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblLeftRightBorder.sizePolicy().hasHeightForWidth())
+        self.lblLeftRightBorder.setSizePolicy(sizePolicy)
+        self.lblLeftRightBorder.setObjectName(_fromUtf8("lblLeftRightBorder"))
+        self.hlLeftRightBorder.addWidget(self.lblLeftRightBorder)
+        self.hsLeftRightBorder = QtGui.QSlider(self.tabSetting)
+        self.hsLeftRightBorder.setOrientation(QtCore.Qt.Horizontal)
+        self.hsLeftRightBorder.setObjectName(_fromUtf8("hsLeftRightBorder"))
+        self.hlLeftRightBorder.addWidget(self.hsLeftRightBorder)
+        self.verticalLayout.addLayout(self.hlLeftRightBorder)
+        self.lblDefineRightDetectionArea = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblDefineRightDetectionArea.sizePolicy().hasHeightForWidth())
+        self.lblDefineRightDetectionArea.setSizePolicy(sizePolicy)
+        self.lblDefineRightDetectionArea.setObjectName(_fromUtf8("lblDefineRightDetectionArea"))
+        self.verticalLayout.addWidget(self.lblDefineRightDetectionArea)
+        self.hlRightLeftBorder = QtGui.QHBoxLayout()
+        self.hlRightLeftBorder.setObjectName(_fromUtf8("hlRightLeftBorder"))
+        self.lblRightLeftBorder = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblRightLeftBorder.sizePolicy().hasHeightForWidth())
+        self.lblRightLeftBorder.setSizePolicy(sizePolicy)
+        self.lblRightLeftBorder.setObjectName(_fromUtf8("lblRightLeftBorder"))
+        self.hlRightLeftBorder.addWidget(self.lblRightLeftBorder)
+        self.hsRightLeftBorder = QtGui.QSlider(self.tabSetting)
+        self.hsRightLeftBorder.setOrientation(QtCore.Qt.Horizontal)
+        self.hsRightLeftBorder.setObjectName(_fromUtf8("hsRightLeftBorder"))
+        self.hlRightLeftBorder.addWidget(self.hsRightLeftBorder)
+        self.verticalLayout.addLayout(self.hlRightLeftBorder)
+        self.hlRightRightBorder = QtGui.QHBoxLayout()
+        self.hlRightRightBorder.setObjectName(_fromUtf8("hlRightRightBorder"))
+        self.lblRightRightBorder = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblRightRightBorder.sizePolicy().hasHeightForWidth())
+        self.lblRightRightBorder.setSizePolicy(sizePolicy)
+        self.lblRightRightBorder.setObjectName(_fromUtf8("lblRightRightBorder"))
+        self.hlRightRightBorder.addWidget(self.lblRightRightBorder)
+        self.hsRightRightBorder = QtGui.QSlider(self.tabSetting)
+        self.hsRightRightBorder.setOrientation(QtCore.Qt.Horizontal)
+        self.hsRightRightBorder.setObjectName(_fromUtf8("hsRightRightBorder"))
+        self.hlRightRightBorder.addWidget(self.hsRightRightBorder)
+        self.verticalLayout.addLayout(self.hlRightRightBorder)
+        self.lblDistanceBetween = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblDistanceBetween.sizePolicy().hasHeightForWidth())
+        self.lblDistanceBetween.setSizePolicy(sizePolicy)
+        self.lblDistanceBetween.setObjectName(_fromUtf8("lblDistanceBetween"))
+        self.verticalLayout.addWidget(self.lblDistanceBetween)
+        self.hlDistance = QtGui.QHBoxLayout()
+        self.hlDistance.setObjectName(_fromUtf8("hlDistance"))
+        self.lblDistance = QtGui.QLabel(self.tabSetting)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lblDistance.sizePolicy().hasHeightForWidth())
+        self.lblDistance.setSizePolicy(sizePolicy)
+        self.lblDistance.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.lblDistance.setObjectName(_fromUtf8("lblDistance"))
+        self.hlDistance.addWidget(self.lblDistance)
+        self.hsDistance = QtGui.QSlider(self.tabSetting)
+        self.hsDistance.setOrientation(QtCore.Qt.Horizontal)
+        self.hsDistance.setObjectName(_fromUtf8("hsDistance"))
+        self.hlDistance.addWidget(self.hsDistance)
+        self.verticalLayout.addLayout(self.hlDistance)
+        self.tabWidget.addTab(self.tabSetting, _fromUtf8(""))
+        self.tabConfiguration = QtGui.QWidget()
+        self.tabConfiguration.setObjectName(_fromUtf8("tabConfiguration"))
+        self.gridLayout_7 = QtGui.QGridLayout(self.tabConfiguration)
+        self.gridLayout_7.setObjectName(_fromUtf8("gridLayout_7"))
+        self.label_22 = QtGui.QLabel(self.tabConfiguration)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
+        self.label_22.setSizePolicy(sizePolicy)
+        self.label_22.setText(_fromUtf8(""))
+        self.label_22.setObjectName(_fromUtf8("label_22"))
+        self.gridLayout_7.addWidget(self.label_22, 0, 0, 1, 1)
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setSizeConstraint(QtGui.QLayout.SetMaximumSize)
+        self.gridLayout.setContentsMargins(-1, -1, 0, -1)
+        self.gridLayout.setHorizontalSpacing(1)
+        self.gridLayout.setVerticalSpacing(3)
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.cbConfiguration = QtGui.QComboBox(self.tabConfiguration)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(7)
+        sizePolicy.setHeightForWidth(self.cbConfiguration.sizePolicy().hasHeightForWidth())
+        self.cbConfiguration.setSizePolicy(sizePolicy)
+        self.cbConfiguration.setObjectName(_fromUtf8("cbConfiguration"))
+        self.gridLayout.addWidget(self.cbConfiguration, 0, 1, 1, 1)
+        self.label_23 = QtGui.QLabel(self.tabConfiguration)
+        self.label_23.setText(_fromUtf8(""))
+        self.label_23.setObjectName(_fromUtf8("label_23"))
+        self.gridLayout.addWidget(self.label_23, 2, 1, 1, 1)
+        self.edtConfigurationName = QtGui.QLineEdit(self.tabConfiguration)
+        self.edtConfigurationName.setObjectName(_fromUtf8("edtConfigurationName"))
+        self.gridLayout.addWidget(self.edtConfigurationName, 1, 1, 1, 1)
+        self.gridLayout_7.addLayout(self.gridLayout, 1, 0, 1, 1)
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.gridLayout_7.addLayout(self.horizontalLayout_6, 3, 0, 1, 1)
+        self.horizontalLayout_7 = QtGui.QHBoxLayout()
+        self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
+        self.btnSaveConfiguration = QtGui.QPushButton(self.tabConfiguration)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.btnSaveConfiguration.sizePolicy().hasHeightForWidth())
+        self.btnSaveConfiguration.setSizePolicy(sizePolicy)
+        self.btnSaveConfiguration.setObjectName(_fromUtf8("btnSaveConfiguration"))
+        self.horizontalLayout_7.addWidget(self.btnSaveConfiguration)
+        self.btnDeleteConfiguration = QtGui.QPushButton(self.tabConfiguration)
+        self.btnDeleteConfiguration.setObjectName(_fromUtf8("btnDeleteConfiguration"))
+        self.horizontalLayout_7.addWidget(self.btnDeleteConfiguration)
+        self.gridLayout_7.addLayout(self.horizontalLayout_7, 2, 0, 1, 1)
+        self.tabWidget.addTab(self.tabConfiguration, _fromUtf8(""))
+        self.tabLog = QtGui.QWidget()
+        self.tabLog.setObjectName(_fromUtf8("tabLog"))
+        self.gridLayout_5 = QtGui.QGridLayout(self.tabLog)
+        self.gridLayout_5.setObjectName(_fromUtf8("gridLayout_5"))
+        self.edtLog = QtGui.QTextEdit(self.tabLog)
+        self.edtLog.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.edtLog.setBaseSize(QtCore.QSize(0, 0))
+        self.edtLog.setFrameShape(QtGui.QFrame.Box)
+        self.edtLog.setFrameShadow(QtGui.QFrame.Plain)
+        self.edtLog.setReadOnly(True)
+        self.edtLog.setObjectName(_fromUtf8("edtLog"))
+        self.gridLayout_5.addWidget(self.edtLog, 0, 0, 1, 1)
+        self.tabWidget.addTab(self.tabLog, _fromUtf8(""))
+        self.gridLayout_4.addWidget(self.tabWidget, 3, 0, 1, 1)
+        CWBierzapfanlageGUI.setCentralWidget(self.centralwidget)
+        self.statusbar = QtGui.QStatusBar(CWBierzapfanlageGUI)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        CWBierzapfanlageGUI.setStatusBar(self.statusbar)
 
-class Slider(QtGui.QWidget):
-	def __init__(self,parent=None,callback=None,text="New Label",x=0,y=0,w=100,h=30):
-		QtGui.QWidget.__init__(self, parent)
-		self.CWConstants = parent.CWConstants
-		self.section = parent.combo.combo.currentText()
+        self.retranslateUi(CWBierzapfanlageGUI)
+        self.tabWidget.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(CWBierzapfanlageGUI)
 
-		self.slider = QtGui.QSlider(QtCore.Qt.Horizontal, parent)
-		self.slider.setFocusPolicy(QtCore.Qt.NoFocus)
-		self.slider.setGeometry(x,y,w,h)
-		self.slider.setMinimum(0)
-		self.slider.setMaximum(self.CWConstants.w)
-		self.slider.connect(self.slider, QtCore.SIGNAL('valueChanged(int)'), callback)
-		if(self.section.size() > 0):
-			self.slider.setValue(parent.CWProfileManager.configParser.getint(str(self.section), str(text)))
-		
-		Label(parent=parent,title=text,x=x,y=(y-30),w=w)
-
-class ComboBox(QtGui.QWidget):
-	def __init__(self,parent=None,callback=None,CWProfileManager=None,x=0,y=0,w=100,h=30):
-		QtGui.QWidget.__init__(self, parent)
-		self.CWProfileManager = CWProfileManager
-		self.combo = QtGui.QComboBox(parent)
-		self.combo.activated[str].connect(callback)
-		self.combo.setGeometry(x,y,w,h)
-		self.catchConfigs()
-		
-	def catchConfigs(self):
-		self.combo.clear()
-		for section in self.CWProfileManager.configParser.sections():
-			self.combo.addItem(section)
-
-class TextField(QtGui.QWidget):
-	def __init__(self, parent=None,x=0,y=0,w=100,h=30):
-		QtGui.QWidget.__init__(self, parent)
-		self.textField = QtGui.QLineEdit(parent)
-		self.textField.setGeometry(x,y,w,h)
-
-class Label(QtGui.QWidget):
-	def __init__(self,parent=None,title="New Label",x=0,y=0,w=60,h=30):
-		self.parent = parent
-		QtGui.QWidget.__init__(self, parent)
-		self.label = QtGui.QLabel(title,parent)
-		self.label.setGeometry(x,y,w,h)
-
-class StatusField(QtGui.QWidget):
-	def __init__(self,parent=None, x=0,y=0,w=100,h=30):
-		self.parent = parent
-		QtGui.QWidget.__init__(self, parent)
-		self.status = QtGui.QWidget(parent)
-		
-		#self.color = QtGui.QColor(255, 0, 0)
-		self.status.setGeometry(x,y,w,h)
-		self.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name() )
-
-
-class CWConfigWindow(QtGui.QWidget):
-	def __init__(self,CWConstants, CWProfileManager, parent=None,w=400,h=620):
-		self.CWConstants = CWConstants
-		self.CWProfileManager = CWProfileManager
-		self.w=w
-		self.h=h
-		QtGui.QWidget.__init__(self, parent)
-		self.resize(self.w,self.h)
-		self.setWindowTitle('Automatische Bierzapfanlage')
-		self.setWindowIcon(QtGui.QIcon('campus.png'))		
-		self.createAndAddGUIElements()		
-		self.show()
-		
-	def createAndAddGUIElements(self):
-
-		#self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
-
-		#Debug Start Rotate
-		#Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
-
-		#Debug Stop Rotate
-		#Button(parent=self, callback=self.stopRotate, text="Stop Rotate", x=100, y=(self.h-620), w=80)
-
-		#Debug Start Fill
-		#Button(parent=self, callback=self.startFill, text="Start Fill", x=190, y=(self.h-620), w=80)
-
-		#Debug Stop Fill
-		#Button(parent=self, callback=self.stopFill, text="Stop Fill", x=280, y=(self.h-620), w=80)
-
-		#Glass detected label
-		self.glassDetectedLabel = Label(parent=self, title="Glass detected",x=10,y=(self.h-90), w=100)
-
-		#Fill glass label
-		self.fillGlassLabel = Label(parent=self, title="Fill glass",x=140,y=(self.h-90), w=100)
-
-		#Rotate platform label
-		self.rotatePlatformLabel = Label(parent=self, title="Rotate platform",x=230,y=(self.h-90), w=150)
-
-		#Saved Settings ComboBox
-		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-610),w=(self.w-150))
-		
-		#TextField for saving
-		self.textField = TextField(parent=self,  x=(self.w/2+60),y=(self.h-610),w=130)
-		
-		#Close Button
-		Button(parent=self,callback=self.quit, text="Quit",x=10,y=(self.h-40))
-
-		#Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
-
-		#Detect Button
-		Button(parent=self,callback=self.detectingSetting,text="Detect",x=(self.w-210),y=(self.h-40))
-
-		#Save Button
-		Button(parent=self,callback=self.saveSetting,text="Save",x=(self.w-140),y=(self.h-40))
-
-		#Delete Button
-		Button(parent=self,callback=self.deleteSetting,text="Delete",x=(self.w-70),y=(self.h-40))
-
-		#Middle Right Point Slider
-		self.middleRightPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleRightPointValue, text=self.CWConstants.middleRightPointString, x=10, y=(self.h-130), w=(self.w-20))
-
-		#Middle Left Point Slider		
-		self.middleLeftPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleLeftPointValue, text=self.CWConstants.middleLeftPointString, x=10, y=(self.h-200), w=(self.w-20))
-
-		#Distance Top To Bottom Line Slider
-		self.distanceTopToBottomLineSlider = Slider(parent=self, callback=self.CWProfileManager.changeDistanceTopToBottomLineValue, text=self.CWConstants.distanceTopToBottomLineString,x=10,y=(self.h-270), w=(self.w-20))
-
-		#Border Glas Distance Div Slider
-		self.borderGlasDistanceDivSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceDivValue,  text=self.CWConstants.borderGlasDistanceDivString, x=10, y=(self.h-340), w=(self.w-20))
-
-		#Border Glas Distance Slider
-		self.borderGlasDistanceSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceValue, text=self.CWConstants.borderGlasDistanceString, x=10, y=(self.h-410), w=(self.w-20))
-
-		#Right Border Ignoer Slider
-		self.rightBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeRightBorderIgnorValue, text=self.CWConstants.rightBorderIgnorString, x=10, y=(self.h-480), w=(self.w-20))
-
-		#Left Border Ignor Slider
-		self.leftBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeLeftBorderIgnorValue, text=self.CWConstants.leftBorderIgnorString, x=10, y=(self.h-550), w=(self.w-20))
-
-	#Slider auf den neuen Wert setzen
-	#Alle neuen Slider muessen hier hinzugefuegt werden
-	def changeSetting(self):
-		if(self.combo.combo.currentText().size() > 0):
-			if DEBUG == True:
-				print ("GUI Change Setting")
-			section = str(self.combo.combo.currentText())
-			self.middleRightPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleRightPointString), True)))
-			self.middleLeftPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleLeftPointString),True)))
-			self.distanceTopToBottomLineSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.distanceTopToBottomLineString),True)))
-			self.borderGlasDistanceDivSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceDivString),True)))
-			self.borderGlasDistanceSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceString),True)))
-			self.rightBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.rightBorderIgnorString),True)))
-			self.leftBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.leftBorderIgnorString),True)))
-				
-	#Loeschen eines Setting (Profiles)
-	def deleteSetting(self):
-		if(self.combo.combo.currentText().size() > 0):
-			self.CWProfileManager.deleteSection(self.combo.combo.currentText())
-			self.combo.catchConfigs()
-			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
-
-	#Speichern eines Setting (Profiles)
-	def saveSetting(self):
-		if self.textField.textField.text().size() == 0:
-			if DEBUG == True:
-				print ("GUI Update Section: " + self.combo.combo.currentText())
-			self.CWProfileManager.updateSection(self.combo.combo.currentText())
-		else:
-			section = self.textField.textField.text()
-			if DEBUG == True:
-				print ("GUI Save New Section: " + section)
-			self.CWProfileManager.saveSection(section)
-			self.combo.catchConfigs()
-			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
-			self.changeSetting()
-
-	def stopScanning(self):
-		self.CWConstants.stopProgram = True
-
-	def quit(self):
-		sys.exit(0)
-
-	def detectingSetting(self):
-		print ("GUI Detecting Setting")
-
-	def glasDetected(self, detected = False):
-		if detected == True:
-			self.glassDetectedLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
-		else:
-			self.glassDetectedLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
-
-	def fillGlass(self, fill = False):
-		if fill == True:
-			self.fillGlassLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
-		else:
-			self.fillGlassLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
-
-	def rotatePlatform(self, rotate = False):
-		if rotate == True:
-			self.rotatePlatformLabel.label.setStyleSheet('color: %s' % QtGui.QColor(0, 255, 0).name())
-		else:
-			self.rotatePlatformLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
-
-	#def startRotate(self):
-	#	self.CWDetection.CWSerial.StartRotation(0.0)
-
-	#def stopRotate(self):
-	#	self.CWDetection.CWSerial.StopRotation()
-
-	#def stopFill(self):
-	#	self.CWDetection.CWSerial.StopFill()
-		
-	#def startFill(self):
-	#	self.CWDetection.CWSerial.StartFill()
+    def retranslateUi(self, CWBierzapfanlageGUI):
+        CWBierzapfanlageGUI.setWindowTitle(_translate("CWBierzapfanlageGUI", "CWBierzapfanlage", None))
+        self.btnExit.setText(_translate("CWBierzapfanlageGUI", "Exit", None))
+        self.lblDefineDetectionArea.setText(_translate("CWBierzapfanlageGUI", "Define left detection area:", None))
+        self.lblLeftLeftBorder.setText(_translate("CWBierzapfanlageGUI", "Left border", None))
+        self.lblLeftRightBorder.setText(_translate("CWBierzapfanlageGUI", "Right border", None))
+        self.lblDefineRightDetectionArea.setText(_translate("CWBierzapfanlageGUI", "Define right detection area:", None))
+        self.lblRightLeftBorder.setText(_translate("CWBierzapfanlageGUI", "Left border", None))
+        self.lblRightRightBorder.setText(_translate("CWBierzapfanlageGUI", "Right border", None))
+        self.lblDistanceBetween.setText(_translate("CWBierzapfanlageGUI", "Distance betwen foam (blue) and top horizontal glass edge (green): ", None))
+        self.lblDistance.setText(_translate("CWBierzapfanlageGUI", "Distance", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabSetting), _translate("CWBierzapfanlageGUI", "Setting", None))
+        self.btnSaveConfiguration.setText(_translate("CWBierzapfanlageGUI", "Save", None))
+        self.btnDeleteConfiguration.setText(_translate("CWBierzapfanlageGUI", "Delete", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabConfiguration), _translate("CWBierzapfanlageGUI", "Configuration", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLog), _translate("CWBierzapfanlageGUI", "Log", None))
 
