@@ -23,8 +23,7 @@
 #  
 
 
-class StateMachine:
+class CWStateMachine:
 	
 	def __init__(self, initialState):
 		self.currentState = initialState
-		self.currentState.run()

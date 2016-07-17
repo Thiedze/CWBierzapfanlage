@@ -7,15 +7,16 @@ Campuswoche 2014
 Serielle-Kommunikation zum steuern der Bierzapfanlage.
 """
 
-import serial
 import sys
-import time
+
+import serial
+
 
 # Version of serial connection
 CONST_SERIAL_CWBOARD = 0
 CONST_SERIAL_RTSCTS = 1
-CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
-#CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
+#CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
+CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
 
 
 # const confirm
@@ -33,7 +34,8 @@ CONST_ROTATE_STOP = 's'.decode('ascii')
 
 DEBUG = False
 
-class CWSerial:	
+class CWSerialHandler:
+		
 	def __init__(self):		
 		if DEBUG == True:
 			print "Init CWSerial"
@@ -61,29 +63,29 @@ class CWSerial:
 			if DEBUG == True:
 				print "Can't open serial port!"
 	
-	def FlushSerial(self):
+	def flushSerial(self):
 		self.ser.flushInput()
 		self.ser.flushOutput()
 		if DEBUG == True:
 			print "FlushSerial"
 	
-	def ReadByte(self):
+	def readByte(self):
 		incomingByte = self.ser.read().decode('ascii')
 		if DEBUG == True:
 			print ("ReadByte", incomingByte)
 		return incomingByte
 
-	def WriteByte(self, outgoingByte):
+	def writeByte(self, outgoingByte):
 		if DEBUG == True:
 			print ("WriteByte", outgoingByte)
 		self.ser.write(outgoingByte)
 
-	def StartRotation(self, secs):
+	def startRotation(self):
 		try:
 			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
-				return self.StartRotationCWBOARD()
+				return self.startRotationCWBOARD()
 			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
-				return self.StartRotationRTSCTS()
+				return self.startRotationRTSCTS()
 			else:
 				return False
 		except:			
@@ -91,23 +93,23 @@ class CWSerial:
 				print ("StartRotation fail", sys.exc_info())
 			return False
 		
-	def StartRotationCWBOARD(self):
+	def startRotationCWBOARD(self):
 		self.FlushSerial()
 		self.WriteByte(CONST_ROTATE_START)
 		return self.ReadByte() == CONST_OK
 		
-	def StartRotationRTSCTS(self):
+	def startRotationRTSCTS(self):
 		self.StopFill()
 		#time.sleep(0.5)
 		self.ser.setRTS(level=True)
 		return True
 
-	def StopRotation(self):
+	def stopRotation(self):
 		try:
 			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
-				return self.StopRotationCWBOARD()
+				return self.stopRotationCWBOARD()
 			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
-				return self.StopRotationRTSCTS()
+				return self.stopRotationRTSCTS()
 			else:
 				return False
 		except:			
@@ -115,21 +117,21 @@ class CWSerial:
 				print ("StopRotation fail", sys.exc_info())
 			return False
 		
-	def StopRotationCWBOARD(self):
+	def stopRotationCWBOARD(self):
 		self.FlushSerial()
 		self.WriteByte(CONST_ROTATE_STOP)
 		return self.ReadByte() == CONST_OK
 		
-	def StopRotationRTSCTS(self):
+	def stopRotationRTSCTS(self):
 		self.ser.setRTS(level=False)
 		return True
 
-	def StartFill(self):
+	def startFill(self):
 		try:
 			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
-				return self.StartFillCWBOARD()
+				return self.startFillCWBOARD()
 			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
-				return self.StartFillRTSCTS()
+				return self.startFillRTSCTS()
 			else:
 				return False
 		except:			
@@ -137,23 +139,23 @@ class CWSerial:
 				print ("StartFill fail", sys.exc_info())
 			return False
 		
-	def StartFillCWBOARD(self):
+	def startFillCWBOARD(self):
 		self.FlushSerial()
 		self.WriteByte(CONST_FILL_START)		
 		return self.ReadByte() == CONST_OK
 		
-	def StartFillRTSCTS(self):
+	def startFillRTSCTS(self):
 		self.StopRotation()
 		#time.sleep(0.10)
 		self.ser.setDTR(level=True)
 		return True
 	
-	def StopFill(self):
+	def stopFill(self):
 		try:
 			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
-				return self.StopFillCWBOARD()
+				return self.stopFillCWBOARD()
 			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
-				return self.StopFillRTSCTS()
+				return self.stopFillRTSCTS()
 			else:
 				return False
 		except:
@@ -161,16 +163,16 @@ class CWSerial:
 				print "StopFill fail"
 			return False
 				
-	def StopFillCWBOARD(self):
+	def stopFillCWBOARD(self):
 		self.FlushSerial()
 		self.WriteByte(CONST_FILL_STOP)
 		return self.ReadByte() == CONST_OK
 		
-	def StopFillRTSCTS(self):
+	def stopFillRTSCTS(self):
 		self.ser.setDTR(level=False)
 		return True
 
-	def Close(self):
+	def close(self):
 		try:
 			if self.ser.isOpen() != True:
 				self.ser.close()
@@ -178,12 +180,12 @@ class CWSerial:
 			if DEBUG == True:
 				print ("Close serial fail", sys.exc_info())
 				
-	def Handshake(self):
+	def handshake(self):
 		try:
 			if CONST_SERIAL_VERSION == CONST_SERIAL_CWBOARD:
-				return self.HandshakeCWBOARD()
+				return self.handshakeCWBOARD()
 			elif CONST_SERIAL_VERSION == CONST_SERIAL_RTSCTS:
-				return self.HandshakeRTSCTS()
+				return self.handshakeRTSCTS()
 			else:
 				return False
 		except:			
@@ -191,7 +193,7 @@ class CWSerial:
 				print ("Handshake fail", sys.exc_info())
 			return False
 
-	def HandshakeCWBOARD(self):
+	def handshakeCWBOARD(self):
 		self.FlushSerial()
 		# waiting for hs request from CW board
 		if self.ReadByte() == CONST_HS_AK:
@@ -212,6 +214,6 @@ class CWSerial:
 		else: 
 			return False
 		
-	def HandshakeRTSCTS(self):
+	def handshakeRTSCTS(self):
 		return True
 		

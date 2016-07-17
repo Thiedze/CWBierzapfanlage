@@ -42,13 +42,13 @@ class CWCLIDrawer:
 		pt1 = (right[0],0)
 		pt2 = (right[0],self.CWConstants.h)
 		if self.IsInRange():
-		    	cv2.line(image, pt1, pt2, (0,0,255), 3)
+			cv2.line(image, pt1, pt2, (0,0,255), 3)
 
 		# Top line
 		pt1 = (0,top[1])
 		pt2 = (self.CWConstants.w, top[1])
 		if self.IsInRange():		
-		    	cv2.line(image, pt1, pt2, (0,255,0), 3)
+			cv2.line(image, pt1, pt2, (0,255,0), 3)
 			
 		"""# bottom_beer line
 		pt1 = (0,self.bottom_beer[1])

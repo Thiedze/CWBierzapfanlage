@@ -22,12 +22,20 @@
 #  
 #  
 
-class State:
+class CWState:
+	
+	def __init__(self, frameHandler = None, serialHandler = None, parameterHandler = None):
+		self.nextState = None
+		self.errorState = None
+		self.ExceptionRaised = False
+		self.frameHandler = frameHandler 
+		self.serialHandler = serialHandler
+		self.parameterHandler = parameterHandler
 	
 	# run method, should be called by main loop after state change
-	def run(self):
-		assert 0, "run() not implemented"
+	def run(self, image):
+		assert 0, "run() not implemented: " + self.__class__.__name__
 
 	# next method, called for state change, returns next state
-	def next(self, input)
-		assert 0, "next(input) not implemented"
+	def next(self):
+		assert 0, "next() not implemented"

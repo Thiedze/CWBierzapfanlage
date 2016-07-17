@@ -7,18 +7,16 @@ GUI fuer die Automatische-Bierzapfanlage
 """
 
 import sys
-
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-
-from CWBierzapfanlageGUI import Ui_CWBierzapfanlageGUI
-from CWBierzapfanlageConstants import CWConstants
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+from CWConstants import CWConstants
 from CWBierzapfanlageProfileManager import CWProfileManager
 
+DEBUG = False
 
-DEBUG = True
-
-'''class Button(QtGui.QWidget):
+class Button(QtGui.QWidget):
 	def __init__(self,parent=None,callback=None,text="New Button",x=0,y=0,w=60,h=30):
 		QtGui.QWidget.__init__(self, parent)
 		self.button = QtGui.QPushButton(text, parent)
@@ -81,68 +79,25 @@ class StatusField(QtGui.QWidget):
 		
 		#self.color = QtGui.QColor(255, 0, 0)
 		self.status.setGeometry(x,y,w,h)
-		self.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name() )'''
+		self.status.setStyleSheet("QWidget { background-color: %s }" % QtGui.QColor(255, 0, 0).name() )
 
 
-class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
-	def __init__(self,CWConstants, CWProfileManager):
-		QtGui.QWidget.__init__(self, None)
-		
+class CWConfigWindow(QtGui.QWidget):
+	def __init__(self,CWConstants, CWProfileManager, parent=None,w=400,h=620):
 		self.CWConstants = CWConstants
 		self.CWProfileManager = CWProfileManager
-		self.CWBierzapfanlageGUI = Ui_CWBierzapfanlageGUI()
-		self.CWBierzapfanlageGUI.setupUi(self)
-	
-		self.ConnectSlots()		
+		self.w=w
+		self.h=h
+		QtGui.QWidget.__init__(self, parent)
+		self.resize(self.w,self.h)
+		self.setWindowTitle('Automatische Bierzapfanlage')
+		self.setWindowIcon(QtGui.QIcon('campus.png'))		
+		self.createAndAddGUIElements()		
 		self.show()
-		
-	def catchConfigs(self, comboBox):
-		comboBox.clear()
-		for section in self.CWProfileManager.configParser.sections():
-			comboBox.addItem(section)
-		
-	def ConnectSettingSlots(self):
-		#Close Button
-		self.CWBierzapfanlageGUI.btnExit.clicked.connect(self.quit)
-		
-		#Left area left border
-		self.CWBierzapfanlageGUI.hsLeftLeftBorder.sliderMoved.connect(self.CWProfileManager.changeLeftBorderIgnorValue)
-		self.CWBierzapfanlageGUI.hsLeftLeftBorder.setMaximum(self.CWConstants.w)
-		
-		#Left area right border		
-		self.CWBierzapfanlageGUI.hsLeftRightBorder.sliderMoved.connect(self.CWProfileManager.changeLeftBorderIgnorValue)
-		self.CWBierzapfanlageGUI.hsLeftRightBorder.setMaximum(self.CWConstants.w)
-		
-		#Right area left border		
-		self.CWBierzapfanlageGUI.hsRightLeftBorder.sliderMoved.connect(self.CWProfileManager.changeLeftBorderIgnorValue)
-		self.CWBierzapfanlageGUI.hsRightLeftBorder.setMaximum(self.CWConstants.w)
-		
-		#Right area right border		
-		self.CWBierzapfanlageGUI.hsRightRightBorder.sliderMoved.connect(self.CWProfileManager.changeLeftBorderIgnorValue)
-		self.CWBierzapfanlageGUI.hsRightRightBorder.setMaximum(self.CWConstants.w)
-		
-		#Distance between foam and top horizontal glass edge
-		self.CWBierzapfanlageGUI.hsDistance.sliderMoved.connect(self.CWProfileManager.changeDistanceTopToBottomLineValue)
-		self.CWBierzapfanlageGUI.hsDistance.setMaximum(self.CWConstants.w)
-		
-	def ConnectConfigurationSlots(self):
-		#Configuration combobox		
-		self.CWBierzapfanlageGUI.cbConfiguration.currentIndexChanged.connect(self.changeConfiguration)
-		self.catchConfigs(self.CWBierzapfanlageGUI.cbConfiguration)
-		
-		#Save configuration
-		self.CWBierzapfanlageGUI.btnSaveConfiguration.clicked.connect(self.saveConfiguration)
-		
-		#Delete configuration
-		self.CWBierzapfanlageGUI.btnDeleteConfiguration.clicked.connect(self.deleteConfiguration)
-				
-	def ConnectSlots(self):
-		self.ConnectSettingSlots()
-		self.ConnectConfigurationSlots()
 		
 	def createAndAddGUIElements(self):
 
-		'''#self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
+		#self.statusField = StatusField(parent=self, x=80, y=(self.h-40))
 
 		#Debug Start Rotate
 		#Button(parent=self, callback=self.startRotate, text="Start Rotate", x=10, y=(self.h-620), w=80)
@@ -164,9 +119,35 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 
 		#Rotate platform label
 		self.rotatePlatformLabel = Label(parent=self, title="Rotate platform",x=230,y=(self.h-90), w=150)
-			
+
+		#Saved Settings ComboBox
+		self.combo = ComboBox(parent=self, callback=self.changeSetting,CWProfileManager=self.CWProfileManager, x=10,y=(self.h-610),w=(self.w-150))
+		
+		#TextField for saving
+		self.textField = TextField(parent=self,  x=(self.w/2+60),y=(self.h-610),w=130)
+		
+		#Close Button
+		Button(parent=self,callback=self.quit, text="Quit",x=10,y=(self.h-40))
+
+		#Button(parent=self, callback=self.stopScanning, text="Stop", x=80, y=(self.h-40))
+
 		#Detect Button
 		Button(parent=self,callback=self.detectingSetting,text="Detect",x=(self.w-210),y=(self.h-40))
+
+		#Save Button
+		Button(parent=self,callback=self.saveSetting,text="Save",x=(self.w-140),y=(self.h-40))
+
+		#Delete Button
+		Button(parent=self,callback=self.deleteSetting,text="Delete",x=(self.w-70),y=(self.h-40))
+
+		#Middle Right Point Slider
+		self.middleRightPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleRightPointValue, text=self.CWConstants.middleRightPointString, x=10, y=(self.h-130), w=(self.w-20))
+
+		#Middle Left Point Slider		
+		self.middleLeftPointSlider = Slider(parent=self, callback=self.CWProfileManager.changeMiddleLeftPointValue, text=self.CWConstants.middleLeftPointString, x=10, y=(self.h-200), w=(self.w-20))
+
+		#Distance Top To Bottom Line Slider
+		self.distanceTopToBottomLineSlider = Slider(parent=self, callback=self.CWProfileManager.changeDistanceTopToBottomLineValue, text=self.CWConstants.distanceTopToBottomLineString,x=10,y=(self.h-270), w=(self.w-20))
 
 		#Border Glas Distance Div Slider
 		self.borderGlasDistanceDivSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceDivValue,  text=self.CWConstants.borderGlasDistanceDivString, x=10, y=(self.h-340), w=(self.w-20))
@@ -174,46 +155,48 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		#Border Glas Distance Slider
 		self.borderGlasDistanceSlider = Slider(parent=self, callback=self.CWProfileManager.changeBorderGlasDistanceValue, text=self.CWConstants.borderGlasDistanceString, x=10, y=(self.h-410), w=(self.w-20))
 
-		'''
+		#Right Border Ignoer Slider
+		self.rightBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeRightBorderIgnorValue, text=self.CWConstants.rightBorderIgnorString, x=10, y=(self.h-480), w=(self.w-20))
+
+		#Left Border Ignor Slider
+		self.leftBorderIgnorSlider = Slider(parent=self, callback=self.CWProfileManager.changeLeftBorderIgnorValue, text=self.CWConstants.leftBorderIgnorString, x=10, y=(self.h-550), w=(self.w-20))
 
 	#Slider auf den neuen Wert setzen
 	#Alle neuen Slider muessen hier hinzugefuegt werden
-	def changeConfiguration(self):
-		if(self.CWBierzapfanlageGUI.cbConfiguration.currentText().size() > 0):
+	def changeSetting(self):
+		if(self.combo.combo.currentText().size() > 0):
 			if DEBUG == True:
-				print ("GUI Change Setting: " + self.CWBierzapfanlageGUI.cbConfiguration.currentText())
-			section = str(self.CWBierzapfanlageGUI.cbConfiguration.currentText())
-			
-			if DEBUG == True:
-				print("leftBorderIgnor from config parser", int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.leftBorderIgnorString),True)))
-			
-			self.CWBierzapfanlageGUI.hsLeftLeftBorder.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.leftBorderIgnorString),True)))
-			self.CWBierzapfanlageGUI.hsLeftRightBorder.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleLeftPointString),True)))
-			self.CWBierzapfanlageGUI.hsRightLeftBorder.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleRightPointString), True)))
-			self.CWBierzapfanlageGUI.hsRightRightBorder.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.rightBorderIgnorString),True)))
-			self.CWBierzapfanlageGUI.hsDistance.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.distanceTopToBottomLineString),True)))
+				print ("GUI Change Setting")
+			section = str(self.combo.combo.currentText())
+			self.middleRightPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleRightPointString), True)))
+			self.middleLeftPointSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.middleLeftPointString),True)))
+			self.distanceTopToBottomLineSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.distanceTopToBottomLineString),True)))
+			self.borderGlasDistanceDivSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceDivString),True)))
+			self.borderGlasDistanceSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.borderGlasDistanceString),True)))
+			self.rightBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.rightBorderIgnorString),True)))
+			self.leftBorderIgnorSlider.slider.setValue(int(self.CWProfileManager.configParser.get(section, str(self.CWConstants.leftBorderIgnorString),True)))
 				
-	#Loeschen eines Profiles
-	def deleteConfiguration(self):
-		if(self.CWBierzapfanlageGUI.cbConfiguration.currentText().size() > 0):
-			self.CWProfileManager.deleteSection(self.CWBierzapfanlageGUI.cbConfiguration.currentText())
-			self.catchConfigs(self.CWBierzapfanlageGUI.cbConfiguration)
-			self.CWBierzapfanlageGUI.cbConfiguration.setCurrentIndex(int(self.CWBierzapfanlageGUI.cbConfiguration.count()-1))
+	#Loeschen eines Setting (Profiles)
+	def deleteSetting(self):
+		if(self.combo.combo.currentText().size() > 0):
+			self.CWProfileManager.deleteSection(self.combo.combo.currentText())
+			self.combo.catchConfigs()
+			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
 
-	#Speichern eines Profiles
-	def saveConfiguration(self):
-		if self.CWBierzapfanlageGUI.edtConfigurationName.text().size() == 0:
+	#Speichern eines Setting (Profiles)
+	def saveSetting(self):
+		if self.textField.textField.text().size() == 0:
 			if DEBUG == True:
-				print ("GUI Update Section: " + self.CWBierzapfanlageGUI.cbConfiguration.currentText())
-			self.CWProfileManager.updateSection(self.CWBierzapfanlageGUI.cbConfiguration.currentText())
+				print ("GUI Update Section: " + self.combo.combo.currentText())
+			self.CWProfileManager.updateSection(self.combo.combo.currentText())
 		else:
-			section = self.CWBierzapfanlageGUI.edtConfigurationName.text()
+			section = self.textField.textField.text()
 			if DEBUG == True:
 				print ("GUI Save New Section: " + section)
 			self.CWProfileManager.saveSection(section)
-			self.catchConfigs(self.CWBierzapfanlageGUI.cbConfiguration)
-			self.CWBierzapfanlageGUI.cbConfiguration.setCurrentIndex(int(self.CWBierzapfanlageGUI.cbConfiguration.count()-1))
-			self.changeConfiguration()
+			self.combo.catchConfigs()
+			self.combo.combo.setCurrentIndex(int(self.combo.combo.count()-1))
+			self.changeSetting()
 
 	def stopScanning(self):
 		self.CWConstants.stopProgram = True
