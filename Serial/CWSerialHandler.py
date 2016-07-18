@@ -99,7 +99,7 @@ class CWSerialHandler:
 		return self.ReadByte() == CONST_OK
 		
 	def startRotationRTSCTS(self):
-		self.StopFill()
+		self.stopFill()
 		#time.sleep(0.5)
 		self.ser.setRTS(level=True)
 		return True
