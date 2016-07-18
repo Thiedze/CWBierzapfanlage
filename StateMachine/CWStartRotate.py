@@ -53,6 +53,8 @@ class CWStartRotate(CWState):
                     if lines != None:
                         if self.getLeftBorderFromGlass(lines) != self.parameterHandler.mmiddle_left_point and self.getRightBorderFromGlass(lines) != self.parameterHandler.middle_right_point:
                             break
+        else:
+            self.ExceptionRaised = True 
                 
     def next(self):
         if self.ExceptionRaised == True:
