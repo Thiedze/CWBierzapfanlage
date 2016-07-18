@@ -46,26 +46,27 @@ class CWStartFill(CWState):
 
     def run(self, image):
         foundTopBorder = False
-        while True:
-            if foundTopBorder == False:
-                lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Horizontal)
-        
-            if foundTopBorder == False:
-                topBorder = self.getTopBorderFromGlass(lines)
-                if topBorder != CWConstants.FRAME_HEIGHT:
-                    self.ExceptionRaised = not self.serialHandler.startFill()
-                    if self.ExceptionRaised == True:
-                        break
-                    foundTopBorder = True
+        if self.serialHandler.handshake() == True:
+            while True:
+                if foundTopBorder == False:
+                    lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Horizontal)
+            
+                if foundTopBorder == False:
+                    topBorder = self.getTopBorderFromGlass(lines)
+                    if topBorder != CWConstants.FRAME_HEIGHT:
+                        self.ExceptionRaised = not self.serialHandler.startFill()
+                        if self.ExceptionRaised == True:
+                            break
+                        foundTopBorder = True
+                        
+                if foundTopBorder == True:
+                    contours = self.frameHandler.getContoursFromNextFrame((self.parameterHandler.left_border_ignor, self.parameterHandler.middle_left_point), (self.parameterHandler.middle_right_point, self.parameterHandler.right_border_ignor))
                     
-            if foundTopBorder == True:
-                contours = self.frameHandler.getContoursFromNextFrame((self.parameterHandler.left_border_ignor, self.parameterHandler.middle_left_point), (self.parameterHandler.middle_right_point, self.parameterHandler.right_border_ignor))
-                
-                if contours != None:
-                    foamBorder = self.getFoamBorder(contours)
-                    
-                    if foamBorder - topBorder <= self.parameterHandler.distance_top_to_bottom_line:
-                        break
+                    if contours != None:
+                        foamBorder = self.getFoamBorder(contours)
+                        
+                        if foamBorder - topBorder <= self.parameterHandler.distance_top_to_bottom_line:
+                            break
         
     def next(self):
         if self.ExceptionRaised == True:

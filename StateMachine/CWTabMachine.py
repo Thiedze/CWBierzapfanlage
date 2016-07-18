@@ -49,9 +49,8 @@ class CWTabMachine(CWStateMachine):
     def run(self):
         print("Tabmachine run")
         while True:
-            if self.serialHandler.handshake() == True:
-                self.currentState.run()
-                self.currentState = self.currentState.next()
+            self.currentState.run()
+            self.currentState = self.currentState.next()
             
         self.frameHandler.release()
         self.serialHandler.close()
