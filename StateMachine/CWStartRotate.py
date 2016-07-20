@@ -4,6 +4,7 @@ Created on Jun 1, 2016
 @author: thiedze
 '''
 from os.path import sys
+import traceback
 
 from CLI.CWFrameHandler import LineOrientation
 from StateMachine.CWState import CWState
@@ -44,19 +45,29 @@ class CWStartRotate(CWState):
 
 
     def run(self):
-        if self.serialHandler.handshake() == True:
-            self.ExceptionRaised = not self.serialHandler.startRotation()
-            if self.ExceptionRaised == False:
-                while True:
-                    lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
-                    
-                    if lines != None:
-                        if self.getLeftBorderFromGlass(lines) != self.parameterHandler.mmiddle_left_point and self.getRightBorderFromGlass(lines) != self.parameterHandler.middle_right_point:
-                            break
-        else:
-            self.ExceptionRaised = True 
+        try:
+            self.printName()
+            if self.serialHandler.handshake() == True:
+                self.ExceptionRaised = not self.serialHandler.startRotation()
+                if self.ExceptionRaised == False:
+                    while True:
+                        lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
+                        
+                        if lines != None:
+                            if self.getLeftBorderFromGlass(lines)[0] != self.parameterHandler.middle_left_point and self.getRightBorderFromGlass(lines)[0] != self.parameterHandler.middle_right_point:
+                                break
+                else:
+                    print("start rotate failed \n=========================")
+                    self.ExceptionRaised = True 
+            else:
+                print("handshake failed \n=========================")
+                self.ExceptionRaised = True 
+        except:
+            traceback.print_exc()
+            self.ExceptionRaised = True
                 
     def next(self):
         if self.ExceptionRaised == True:
+            print("Error State: " + self.errorState.__class__.__name__)
             return self.errorState
         return self.nextState

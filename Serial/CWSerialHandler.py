@@ -15,8 +15,8 @@ import serial
 # Version of serial connection
 CONST_SERIAL_CWBOARD = 0
 CONST_SERIAL_RTSCTS = 1
-#CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
-CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
+CONST_SERIAL_VERSION = CONST_SERIAL_CWBOARD
+#CONST_SERIAL_VERSION = CONST_SERIAL_RTSCTS
 
 
 # const confirm
@@ -58,7 +58,7 @@ class CWSerialHandler:
 			
 			if self.ser.isOpen() != True:
 				self.ser.open()
-				self.FlushSerial()			
+				self.flushSerial()			
 		except:
 			if DEBUG == True:
 				print "Can't open serial port!"
@@ -94,9 +94,9 @@ class CWSerialHandler:
 			return False
 		
 	def startRotationCWBOARD(self):
-		self.FlushSerial()
-		self.WriteByte(CONST_ROTATE_START)
-		return self.ReadByte() == CONST_OK
+		self.flushSerial()
+		self.writeByte(CONST_ROTATE_START)
+		return self.readByte() == CONST_OK
 		
 	def startRotationRTSCTS(self):
 		self.stopFill()
@@ -118,9 +118,9 @@ class CWSerialHandler:
 			return False
 		
 	def stopRotationCWBOARD(self):
-		self.FlushSerial()
-		self.WriteByte(CONST_ROTATE_STOP)
-		return self.ReadByte() == CONST_OK
+		self.flushSerial()
+		self.writeByte(CONST_ROTATE_STOP)
+		return self.readByte() == CONST_OK
 		
 	def stopRotationRTSCTS(self):
 		self.ser.setRTS(level=False)
@@ -140,9 +140,9 @@ class CWSerialHandler:
 			return False
 		
 	def startFillCWBOARD(self):
-		self.FlushSerial()
-		self.WriteByte(CONST_FILL_START)		
-		return self.ReadByte() == CONST_OK
+		self.flushSerial()
+		self.writeByte(CONST_FILL_START)		
+		return self.readByte() == CONST_OK
 		
 	def startFillRTSCTS(self):
 		self.StopRotation()
@@ -164,9 +164,9 @@ class CWSerialHandler:
 			return False
 				
 	def stopFillCWBOARD(self):
-		self.FlushSerial()
-		self.WriteByte(CONST_FILL_STOP)
-		return self.ReadByte() == CONST_OK
+		self.flushSerial()
+		self.writeByte(CONST_FILL_STOP)
+		return self.readByte() == CONST_OK
 		
 	def stopFillRTSCTS(self):
 		self.ser.setDTR(level=False)
@@ -194,15 +194,15 @@ class CWSerialHandler:
 			return False
 
 	def handshakeCWBOARD(self):
-		self.FlushSerial()
+		self.flushSerial()
 		# waiting for hs request from CW board
-		if self.ReadByte() == CONST_HS_AK:
-			self.WriteByte(CONST_HS_SYNC)
+		if self.readByte() == CONST_HS_AK:
+			self.writeByte(CONST_HS_SYNC)
 			if DEBUG == True:			
 				print("===========================")
 
 			for count in range(500):
-				incomingByte = self.ReadByte()
+				incomingByte = self.readByte()
 				if DEBUG == True:
 					print ("SERIAL: Handshake count", count, incomingByte)
 				if incomingByte == CONST_OK:

@@ -8,7 +8,7 @@ from StateMachine.CWState import CWState
 
 class CWStopFill(CWState):
 
-    def run(self, image):
+    def run(self):
         self.ExceptionRaised = not self.serialHandler.stopFill()
         
     def next(self):

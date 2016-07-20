@@ -22,8 +22,10 @@
 #  
 #  
 
+import threading
 
-class CWStateMachine:
+class CWStateMachine(threading.Thread):
 	
 	def __init__(self, initialState):
+		threading.Thread.__init__(self)
 		self.currentState = initialState

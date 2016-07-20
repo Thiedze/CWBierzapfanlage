@@ -39,3 +39,6 @@ class CWState:
 	# next method, called for state change, returns next state
 	def next(self):
 		assert 0, "next() not implemented"
+		
+	def printName(self):
+		print("Current running class: " + self.__class__.__name__)

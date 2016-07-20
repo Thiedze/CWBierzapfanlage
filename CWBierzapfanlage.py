@@ -9,18 +9,17 @@ from GUI.CWBierzapfanlageGUIManager import CWBierzapfanlageGUIManager
 from Profile.CWProfileManager import CWProfileManager
 from StateMachine.CWTabMachine import CWTabMachine
 
-
 app = QtGui.QApplication(sys.argv)
 
 tabMachine = CWTabMachine();
 
-#Init des Profile Managers (Erstellen/Aendern/Loeschen/Speichern von Profilen)
+# Init des Profile Managers (Erstellen/Aendern/Loeschen/Speichern von Profilen)
 profileManager = CWProfileManager(tabMachine.parameterHandler)
 
 bierzapfanlageGUIManager = CWBierzapfanlageGUIManager(tabMachine.parameterHandler, profileManager)
 
-#Init der Kantenerkennung (+Init der Seriellen-Schnittstelle)
-thread.start_new_thread(tabMachine.run, ())
+# Kantenerkennung
+tabMachine.start()
 
 sys.exit(app.exec_())
 

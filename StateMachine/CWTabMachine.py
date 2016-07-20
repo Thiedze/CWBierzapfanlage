@@ -3,6 +3,9 @@ Created on Jun 1, 2016
 
 @author: thiedze
 '''
+from os.path import sys
+import cv2
+
 from CLI.CWFrameHandler import CWFrameHandler
 from CWStartFill import CWStartFill
 from CWStartRotate import CWStartRotate
@@ -16,6 +19,7 @@ from Serial.CWSerialHandler import CWSerialHandler
 class CWTabMachine(CWStateMachine):
 
     def __init__(self):
+        self.capture = cv2.VideoCapture(0)
         self.initHandler()        
         self.initStates()
         self.setNextStates()
@@ -24,14 +28,14 @@ class CWTabMachine(CWStateMachine):
         CWStateMachine.__init__(self, self.startRotate)
         
     def initHandler(self):
-        self.frameHandler = CWFrameHandler() 
+        self.frameHandler = CWFrameHandler(self.capture) 
         self.serialHandler = CWSerialHandler()
         self.parameterHandler = CWParameterHandler()
         
     def initStates(self):
         self.stopFill = CWStopFill(self.frameHandler, self.serialHandler, self.parameterHandler)
         self.startFill = CWStartFill(self.frameHandler, self.serialHandler, self.parameterHandler)
-        self.stopRotate = CWStopRotate(serialHandler = self.serialHandler)
+        self.stopRotate = CWStopRotate(serialHandler=self.serialHandler)
         self.startRotate = CWStartRotate(self.frameHandler, self.serialHandler, self.parameterHandler)
         
     def setNextStates(self):
@@ -47,11 +51,17 @@ class CWTabMachine(CWStateMachine):
         self.stopRotate.errorState = self.startRotate
         
     def run(self):
-        print("Tabmachine run")
-        while True:
-            self.currentState.run()
-            self.currentState = self.currentState.next()
-            
-        self.frameHandler.release()
-        self.serialHandler.close()
+        try:
+            while True:
+                self.currentState.run()
+                self.currentState = self.currentState.next()
+                
+                if self.parameterHandler.stopProgram == True:
+                    self.frameHandler.release()
+                    self.serialHandler.close()
+                    break
+        except:
+            print (sys.exc_info())
+            self.frameHandler.release()
+            self.serialHandler.close()
             
