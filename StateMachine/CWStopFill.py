@@ -9,6 +9,7 @@ from StateMachine.CWState import CWState
 class CWStopFill(CWState):
 
     def run(self):
+        self.printName()
         self.ExceptionRaised = not self.serialHandler.stopFill()
         
     def next(self):

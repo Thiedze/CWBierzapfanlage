@@ -22,6 +22,8 @@
 #  
 #  
 
+DEBUG = True
+
 class CWState:
 	
 	def __init__(self, frameHandler = None, serialHandler = None, parameterHandler = None):
@@ -41,4 +43,5 @@ class CWState:
 		assert 0, "next() not implemented"
 		
 	def printName(self):
-		print("Current running class: " + self.__class__.__name__)
+		if DEBUG == True:
+			print("Current running class: " + self.__class__.__name__)

@@ -72,9 +72,6 @@ class CWStartFill(CWState):
                     if contours != None:
                         foamBorder = self.getFoamBorder(contours)
                         
-                        print(foamBorder)
-                        print(topBorder)
-                        
                         if foamBorder[1] - topBorder[1] <= self.parameterHandler.distance_top_to_bottom_line:
                             break
         except:

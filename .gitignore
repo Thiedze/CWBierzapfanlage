@@ -30,3 +30,9 @@
 /StateMachine/CWStopRotate.pyc
 /StateMachine/CWTabMachine.pyc
 /StateMachine/__init__.pyc
+/CLI/*.py~
+/Serial/*.py~
+/StateMachine/*.py~
+/StateMachine/*.pyc
+*.sh~
+
