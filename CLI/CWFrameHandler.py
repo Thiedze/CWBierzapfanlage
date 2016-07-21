@@ -21,7 +21,8 @@ class LineOrientation(Enum):
 
 class CWFrameHandler(object):
         
-    def __init__(self, capture):
+    def __init__(self, capture, parameterHandler):
+        self.parameterHandler = parameterHandler
         self.capture = capture
 	
     def release(self):
@@ -118,5 +119,35 @@ class CWFrameHandler(object):
         else:
             return None
             
+    def getLeftBorderFromGlass(self, lines):
+        try:
+            leftBorder = (self.parameterHandler.middle_left_point,0)
+            for line in lines[0]:
+                if line[0] < self.parameterHandler.middle_left_point:
+                    #Es wird geschaut, ob die gefundene Linie
+                    #weiter links liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
+                    if line[0] < leftBorder[0] and line[0] == line[2] and line[0] > self.parameterHandler.left_border_ignor:
+                        leftBorder = (line[0], line[1])
+                        continue
+                    
+            return leftBorder
+        except: 
+            print("getLeftBorderFromGlass fail: : ", sys.exc_info())
+        
+    def getRightBorderFromGlass(self, lines):
+        try:
+            rightBorder = (self.parameterHandler.middle_right_point,0)
+            for line in lines[0]:
+                #length = math.sqrt((line[0]-line[2])**2+(line[1]-line[3])**2)
+                if line[0] > self.parameterHandler.middle_right_point:
+                    #Es wird geschaut, ob die gefundene Linie
+                    #weiter rechts liegt als die aktuelle :and: vertikal ist :and: nicht im ignoriertem Bereich liegt
+                    if line[0] > rightBorder[0] and line[0] == line[2] and line[0] < self.parameterHandler.right_border_ignor:
+                        rightBorder = (line[0], line[1])
+                        continue
+                    
+            return rightBorder
+        except: 
+            print("getRightBorderFromGlass fail: ", sys.exc_info())
             
             
