@@ -8,24 +8,35 @@ GUI fuer die Automatische-Bierzapfanlage
 
 import sys
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
+import numpy as np
+import cv2
 
 from CWConstants import CWConstants
 from GUI.CWBierzapfanlageGUI import Ui_CWBierzapfanlageGUI
+from GUI.CWBierzapfanlageCLIDrawer import CWCLIDrawer
 
-
-DEBUG = True
+DEBUG = False
 
 class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 	def __init__(self, parameterHandler, profileManager):
 		QtGui.QWidget.__init__(self, None)
 		
 		self.parameterHandler = parameterHandler
+		self.cliDrawer = CWCLIDrawer(self.parameterHandler)
 		self.profileManager = profileManager
 		self.bierzapfanlageGUI = Ui_CWBierzapfanlageGUI()
 		self.bierzapfanlageGUI.setupUi(self)
 	
 		self.ConnectSlots()
+		self.timer = QtCore.QTimer()
+		self.timer.timeout.connect(self.updateCam)
+		self.left = None
+		self.right = None
+		self.top = None
+		self.bottom_foam = None
+		self.frame = None
+		self.timer.start(16)
 		self.show()		
 		
 	def catchConfigs(self, comboBox):
@@ -35,7 +46,7 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		
 	def ConnectSettingSlots(self):
 		#Close Button
-		self.bierzapfanlageGUI.btnExit.clicked.connect(self.quit)
+		self.bierzapfanlageGUI.btnExit.clicked.connect(self.stopScanning)
 		
 		#Left area left border
 		self.bierzapfanlageGUI.hsLeftLeftBorder.sliderMoved.connect(self.profileManager.changeLeftBorderIgnorValue)
@@ -113,9 +124,7 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 
 	def stopScanning(self):
 		self.parameterHandler.stopProgram = True
-
-	def quit(self):
-		sys.exit(0)
+		QtCore.QCoreApplication.instance().quit()
 
 	def detectingSetting(self):
 		print ("GUI Detecting Setting")
@@ -138,15 +147,18 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		else:
 			self.rotatePlatformLabel.label.setStyleSheet('color: %s' % QtGui.QColor(255, 0, 0).name())
 
-	#def startRotate(self):
-	#	self.CWDetection.CWSerial.StartRotation(0.0)
+	def updateCam(self):
+		if self.frame != None:
+			self.cliDrawer.draw(self.frame, self.left, self.right, self.top, self.bottom_foam)
 
-	#def stopRotate(self):
-	#	self.CWDetection.CWSerial.StopRotation()
-
-	#def stopFill(self):
-	#	self.CWDetection.CWSerial.StopFill()
-		
-	#def startFill(self):
-	#	self.CWDetection.CWSerial.StartFill()
+	def setFrame(self, frame, left, right, top, bottom_foam):
+		self.frame = frame
+		if left != None:		
+			self.left = left
+		if right != None:		
+			self.right = right
+		if top != None:		
+			self.top = top
+		if bottom_foam != None:
+			self.bottom_foam = bottom_foam
 

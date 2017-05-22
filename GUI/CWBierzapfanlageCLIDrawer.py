@@ -8,62 +8,65 @@ Dient zum Zeichnen der Hilflinien.
 """
 
 import cv2
+from CWConstants import CWConstants
 
-DEBUG = False
+DEBUG = True
 
 class CWCLIDrawer:
-	def __init__(self, CWConstants):
-		self.CWConstants = CWConstants
+	def __init__(self, parameterHandler):
+		self.parameterHandler = parameterHandler
+		self.left = None
+		self.right = None
+		self.top = None
+		self.bottom_foam = None
 
-	def Draw(self, image, left, right, top, bottom_foam):		
-		pt1 = (self.CWConstants.left_border_ignor,0)
-		pt2 = (self.CWConstants.left_border_ignor,self.CWConstants.h)
+	def draw(self, image, left = None, right = None, top = None, bottom_foam = None):		
+		pt1 = (self.parameterHandler.left_border_ignor,0)
+		pt2 = (self.parameterHandler.left_border_ignor, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 3)
 
-		pt1 = (self.CWConstants.right_border_ignor,0)
-		pt2 = (self.CWConstants.right_border_ignor,self.CWConstants.h)
+		pt1 = (self.parameterHandler.right_border_ignor,0)
+		pt2 = (self.parameterHandler.right_border_ignor, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 3)	
 
-		pt1 = (self.CWConstants.middle_left_point,0)
-		pt2 = (self.CWConstants.middle_left_point,self.CWConstants.h)
+		pt1 = (self.parameterHandler.middle_left_point,0)
+		pt2 = (self.parameterHandler.middle_left_point, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 3)		
 		
-		pt1 = (self.CWConstants.middle_right_point,0)
-		pt2 = (self.CWConstants.middle_right_point,self.CWConstants.h)
+		pt1 = (self.parameterHandler.middle_right_point,0)
+		pt2 = (self.parameterHandler.middle_right_point, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 3)	
 
 		# Left line
-		pt1 = (left[0],0)
-		pt2 = (left[0],self.CWConstants.h)
-		if self.IsInRange():
+		if left != None:
+			self.left = left
+			pt1 = (left[0],0)
+			pt2 = (left[0], CWConstants.FRAME_WIDTH)
 			cv2.line(image, pt1, pt2, (255,0,255), 3)
 
 		# Right line
-		pt1 = (right[0],0)
-		pt2 = (right[0],self.CWConstants.h)
-		if self.IsInRange():
+		if right != None:
+			self.right = right
+			pt1 = (right[0],0)
+			pt2 = (right[0], CWConstants.FRAME_WIDTH)
 			cv2.line(image, pt1, pt2, (0,0,255), 3)
 
 		# Top line
-		pt1 = (0,top[1])
-		pt2 = (self.CWConstants.w, top[1])
-		if self.IsInRange():		
+		if top != None:
+			self.top = top
+			pt1 = (0,top[1])
+			pt2 = (CWConstants.FRAME_HEIGHT, top[1])
 			cv2.line(image, pt1, pt2, (0,255,0), 3)
-			
-		"""# bottom_beer line
-		pt1 = (0,self.bottom_beer[1])
-	    	pt2 = (self.w, self.bottom_beer[1])
-		if self.IsInRange():
-			cv2.line(self.img, pt1, pt2, (0,255,255), 3)"""
 	
 		# bottom_foam line
-		pt1 = (left[0],bottom_foam[1])
-		pt2 = (right[0], bottom_foam[1])
-		if self.IsInRange() and bottom_foam[1] != self.CWConstants.h:
+		if self.left != None and self.right != None and bottom_foam != None:
+			self.bottom_foam = bottom_foam
+			pt1 = (self.left[0],bottom_foam[1])
+			pt2 = (self.right[0], bottom_foam[1])
 			cv2.line(image, pt1, pt2, (255,0,0), 3)
 
-	def IsInRange(self):
-		#return  self.left[0] != self.middle_right_point and self.right[0] != self.middle_left_point
-		return True
+		if image != None:
+			cv2.imshow("Lines", image)
+
 
 

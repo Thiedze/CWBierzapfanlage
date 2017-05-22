@@ -34,5 +34,6 @@
 /Serial/*.py~
 /StateMachine/*.py~
 /StateMachine/*.pyc
-*.sh~
-
+*.*~
+GUI/*.py~
+Profile/*.py~

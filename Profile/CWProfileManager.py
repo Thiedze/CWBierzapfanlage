@@ -79,37 +79,37 @@ class CWProfileManager:
 		#Middle Right Point
 		if DEBUG == True:
 			print ("Middle Right Point: " + str(self.parameterHandler.middle_right_point))
-		self.configParser.set(str(section), self.parameterHandler.middleRightPointString, self.parameterHandler.middle_right_point)
+		self.configParser.set(str(section), CWConstants.MIDDLE_RIGHT_POINT_CAPTION, self.parameterHandler.middle_right_point)
 
 		#Middle Left Point
 		if DEBUG == True:
 			print ("Middle Left Point: " + str(self.parameterHandler.middle_left_point))
-		self.configParser.set(str(section), self.parameterHandler.middleLeftPointString, self.parameterHandler.middle_left_point)
+		self.configParser.set(str(section), CWConstants.MIDDLE_LEFT_POINT_CAPTION, self.parameterHandler.middle_left_point)
 
 		#Distance Top To Bottom
 		if DEBUG == True:
 			print ("Distance Top To Bottom: " + str(self.parameterHandler.distance_top_to_bottom_line))
-		self.configParser.set(str(section), self.parameterHandler.distanceTopToBottomLineString, self.parameterHandler.distance_top_to_bottom_line)
+		self.configParser.set(str(section), CWConstants.DISTANCE_TOP_TO_BOTTOM_LINE_CAPTION, self.parameterHandler.distance_top_to_bottom_line)
 
 		#Border Glas Distance Div
 		if DEBUG == True:
 			print ("Border Glas Distance Div: " + str(self.parameterHandler.border_glas_distance_div))
-		self.configParser.set(str(section), self.parameterHandler.borderGlasDistanceDivString, self.parameterHandler.border_glas_distance_div)
+		self.configParser.set(str(section), CWConstants.BORDER_GLASS_DISTANCE_DIFFERENCE_CAPTION, self.parameterHandler.border_glas_distance_div)
 
 		#Border Glas Distance
 		if DEBUG == True:
 			print ("Border Glas Distance: " + str(self.parameterHandler.border_glas_distance))
-		self.configParser.set(str(section), self.parameterHandler.borderGlasDistanceString, self.parameterHandler.border_glas_distance)
+		self.configParser.set(str(section), CWConstants.BORDER_GLASS_DISTANCE_CAPTION, self.parameterHandler.border_glas_distance)
 
 		#Right Border Ignor
 		if DEBUG == True:
 			print ("Right Border Ignor: " + str(self.parameterHandler.right_border_ignor))
-		self.configParser.set(str(section), self.parameterHandler.rightBorderIgnorString, self.parameterHandler.right_border_ignor)
+		self.configParser.set(str(section), CWConstants.RIGHT_BORDER_IGNORE_CAPTION, self.parameterHandler.right_border_ignor)
 
 		#Left Border Ignor
 		if DEBUG == True:
 			print ("Left Border Ignor: " + str(self.parameterHandler.left_border_ignor))
-		self.configParser.set(str(section), self.parameterHandler.leftBorderIgnorString, self.parameterHandler.left_border_ignor)
+		self.configParser.set(str(section), CWConstants.LEFT_BORDER_IGNORE_CAPTION, self.parameterHandler.left_border_ignor)
 		
 		#Speichern des neuen Profiles in die Profile-Datei
 		self.configParser.write(cfgfile)

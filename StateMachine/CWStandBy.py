@@ -11,17 +11,19 @@ from StateMachine.CWState import CWState
 
 class CWStandBy(CWState):
 
-    def run(self):
-        try:
-            self.printName()
-            while self.serialHandler.handshake() == False:
-                continue
-        except:
-            traceback.print_exc()
-            self.ExceptionRaised = True
-                
-    def next(self):
-        if self.ExceptionRaised == True:
-            print("Error State: " + self.errorState.__class__.__name__)
-            return self.errorState
-        return self.nextState
+	def run(self):
+		try:
+			self.printName()
+			while self.serialHandler.handshake() == False:
+				if self.parameterHandler.stopProgram == True:
+					break
+				continue
+		except:
+			traceback.print_exc()
+			self.ExceptionRaised = True
+				
+	def next(self):
+		if self.ExceptionRaised == True:
+			print("Error State: " + self.errorState.__class__.__name__)
+			return self.errorState
+		return self.nextState

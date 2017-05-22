@@ -38,5 +38,6 @@ class CWParameterHandler(object):
 
         distance_top_to_bottom_line_percent = 20
         self.distance_top_to_bottom_line = (float(distance_top_to_bottom_line_percent) / 100) * CWConstants.FRAME_HEIGHT
-        self.distance_top_to_bottom_line = int(self.distance_top_to_bottom_line)
+        #self.distance_top_to_bottom_line = int(self.distance_top_to_bottom_line)
+        self.distance_top_to_bottom_line = 55
         self.stopProgram = False
