@@ -15,3 +15,7 @@ sudo yum install pyserial
 
 sudo yum install python-pillow
 
+YouTube
+===================
+https://www.youtube.com/watch?v=nKC2dnGqSlA
+
