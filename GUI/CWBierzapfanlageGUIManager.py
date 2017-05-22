@@ -36,6 +36,7 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		self.top = None
 		self.bottom_foam = None
 		self.frame = None
+		self.debugFrame = None
 		self.timer.start(16)
 		self.show()		
 		
@@ -151,6 +152,9 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		if self.frame != None:
 			self.cliDrawer.draw(self.frame, self.left, self.right, self.top, self.bottom_foam)
 
+		if self.debugFrame != None:
+			cv2.imshow("Debug", self.debugFrame)
+
 	def setFrame(self, frame, left, right, top, bottom_foam):
 		self.frame = frame
 		if left != None:		
@@ -161,4 +165,7 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 			self.top = top
 		if bottom_foam != None:
 			self.bottom_foam = bottom_foam
+	
+	def setDebugFrame(self, frame):
+		self.debugFrame = frame
 

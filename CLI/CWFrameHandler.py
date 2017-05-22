@@ -84,12 +84,14 @@ class CWFrameHandler(object):
 			gray_image_vertical = cv2.erode(gray_image, kernel)
 			gray_image_canny_vertical = cv2.Canny(gray_image_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 			lines =  cv2.HoughLinesP(gray_image_canny_vertical, 1, math.pi , 1, None, 10, 0)
+			self.gui.setDebugFrame(gray_image_canny_vertical)
 			
 		elif lineOrientation == LineOrientation.Horizontal and gray_image != None:
 			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
 			gray_image_horizontal = cv2.erode(gray_image, kernel)
 			gray_image_canny_horizontal= cv2.Canny(gray_image_horizontal, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
-			lines = cv2.HoughLinesP(gray_image_canny_horizontal, 1, math.pi / 2, 1,	None,  10,   0)		
+			lines = cv2.HoughLinesP(gray_image_canny_horizontal, 1, math.pi / 2, 1,	None,  10,   0)
+			self.gui.setDebugFrame(gray_image_canny_horizontal)		
 
 		return lines
 	
@@ -115,7 +117,7 @@ class CWFrameHandler(object):
 			in_range_dst = numpy.concatenate((left_area, right_area), axis=1)
 	
 			contours, hierarchy = cv2.findContours(in_range_dst.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-	
+
 			return contours
 		else:
 			return None

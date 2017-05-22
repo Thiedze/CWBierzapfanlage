@@ -30,6 +30,10 @@ class CWStartFill(CWState):
 					topBorder = self.frameHandler.getTopBorderFromGlass(lines)
 					if topBorder[1] != CWConstants.FRAME_HEIGHT:
 						foundTopBorder = True
+
+						verticalLines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
+						if self.frameHandler.getLeftBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_left_point or self.frameHandler.getRightBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_right_point:
+							break
 					
 				if foundTopBorder == True:
 					contours = self.frameHandler.getContoursFromNextFrame((self.parameterHandler.left_border_ignor, self.parameterHandler.middle_left_point), (self.parameterHandler.middle_right_point, self.parameterHandler.right_border_ignor))

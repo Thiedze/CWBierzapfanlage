@@ -11,7 +11,7 @@ import ConfigParser
 import os
 from CWConstants import CWConstants
 
-DEBUG = False
+DEBUG = True
 
 class CWProfileManager:
 	def __init__(self, parameterHandler):
