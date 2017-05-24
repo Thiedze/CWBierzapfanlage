@@ -84,7 +84,6 @@ class CWFrameHandler(object):
 			gray_image_vertical = cv2.erode(gray_image, kernel)
 			gray_image_canny_vertical = cv2.Canny(gray_image_vertical, lowThreshold, lowThreshold*ratio, apertureSize = kernel_size)
 			lines =  cv2.HoughLinesP(gray_image_canny_vertical, 1, math.pi , 1, None, 10, 0)
-			self.gui.setDebugFrame(gray_image_canny_vertical)
 			
 		elif lineOrientation == LineOrientation.Horizontal and gray_image != None:
 			kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
@@ -115,7 +114,8 @@ class CWFrameHandler(object):
 			
 			# append right area horizontally to left
 			in_range_dst = numpy.concatenate((left_area, right_area), axis=1)
-	
+			self.gui.setDebugFrame(in_range_dst)
+
 			contours, hierarchy = cv2.findContours(in_range_dst.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 			return contours

@@ -37,6 +37,10 @@ class CWCLIDrawer:
 		pt2 = (self.parameterHandler.middle_right_point, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 2)
 
+		pt1 = (0,150)
+		pt2 = (CWConstants.FRAME_WIDTH, 150)
+		cv2.line(image, pt1, pt2, (255, 64, 186), 2)
+
 		# Left line
 		if left != None:
 			self.left = left

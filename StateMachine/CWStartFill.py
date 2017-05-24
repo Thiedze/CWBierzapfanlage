@@ -8,6 +8,7 @@ from os.path import sys
 
 import cv2
 import traceback
+import math
 
 from CLI.CWFrameHandler import LineOrientation
 from CWConstants import CWConstants
@@ -30,7 +31,7 @@ class CWStartFill(CWState):
 					topBorder = self.frameHandler.getTopBorderFromGlass(lines)
 					if topBorder[1] != CWConstants.FRAME_HEIGHT:
 						foundTopBorder = True
-
+						print(topBorder)
 						verticalLines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
 						if self.frameHandler.getLeftBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_left_point or self.frameHandler.getRightBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_right_point:
 							break
@@ -41,7 +42,7 @@ class CWStartFill(CWState):
 					if contours != None:
 						foamBorder = self.frameHandler.getFoamBorder(contours)
 					
-						if foamBorder[1] - topBorder[1] <= self.parameterHandler.distance_top_to_bottom_line or (foamBorder[1] > topBorder[1] and foamBorder[1] != CWConstants.FRAME_HEIGHT):
+						if foamBorder[1] - topBorder[1] <= self.parameterHandler.distance_top_to_bottom_line or (foamBorder[1] > topBorder[1] and foamBorder[1] != CWConstants.FRAME_HEIGHT) or topBorder[1] > 150:
 							break
 						else:
 							startFillCounter = startFillCounter + 1
