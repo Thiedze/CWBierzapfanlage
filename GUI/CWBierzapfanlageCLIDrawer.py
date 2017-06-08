@@ -37,8 +37,8 @@ class CWCLIDrawer:
 		pt2 = (self.parameterHandler.middle_right_point, CWConstants.FRAME_WIDTH)
 		cv2.line(image, pt1, pt2, (0, 64, 186), 2)
 
-		pt1 = (0,150)
-		pt2 = (CWConstants.FRAME_WIDTH, 150)
+		pt1 = (0,155)
+		pt2 = (CWConstants.FRAME_WIDTH, 155)
 		cv2.line(image, pt1, pt2, (255, 64, 186), 2)
 
 		# Left line
@@ -81,8 +81,8 @@ class CWCLIDrawer:
 			bottom_foam = self.bottom_foam
 		
 		if bottom_foam != None:
-			pt1 = (0,CWConstants.FRAME_HEIGHT - bottom_foam[1])
-			pt2 = (CWConstants.FRAME_WIDTH, CWConstants.FRAME_HEIGHT - bottom_foam[1])
+			pt1 = (0,bottom_foam[1])
+			pt2 = (CWConstants.FRAME_WIDTH, bottom_foam[1])
 			cv2.line(image, pt1, pt2, (255,0,0), 8)
 
 		if image != None:

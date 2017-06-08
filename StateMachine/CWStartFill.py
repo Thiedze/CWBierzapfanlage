@@ -42,7 +42,7 @@ class CWStartFill(CWState):
 					if contours != None:
 						foamBorder = self.frameHandler.getFoamBorder(contours)
 					
-						if foamBorder[1] - topBorder[1] <= self.parameterHandler.distance_top_to_bottom_line or (foamBorder[1] > topBorder[1] and foamBorder[1] != CWConstants.FRAME_HEIGHT) or topBorder[1] > 150:
+						if foamBorder[1] - topBorder[1] <= self.parameterHandler.distance_top_to_bottom_line or (foamBorder[1] > topBorder[1] and foamBorder[1] != CWConstants.FRAME_HEIGHT) or topBorder[1] > 160:
 							break
 						else:
 							startFillCounter = startFillCounter + 1
