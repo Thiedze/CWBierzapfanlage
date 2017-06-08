@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'GUI/CWBierzapfanlage.ui'
 #
-# Created: Mon May 22 14:38:35 2017
+# Created: Thu Jun  8 17:24:50 2017
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_CWBierzapfanlageGUI(object):
     def setupUi(self, CWBierzapfanlageGUI):
         CWBierzapfanlageGUI.setObjectName(_fromUtf8("CWBierzapfanlageGUI"))
-        CWBierzapfanlageGUI.resize(612, 685)
+        CWBierzapfanlageGUI.resize(730, 729)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(0)
@@ -38,7 +38,7 @@ class Ui_CWBierzapfanlageGUI(object):
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.btnExit = QtGui.QPushButton(self.centralwidget)
         self.btnExit.setObjectName(_fromUtf8("btnExit"))
-        self.gridLayout_4.addWidget(self.btnExit, 4, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.btnExit, 5, 0, 1, 1)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabSetting = QtGui.QWidget()
@@ -222,6 +222,9 @@ class Ui_CWBierzapfanlageGUI(object):
         self.gridLayout_5.addWidget(self.edtLog, 0, 0, 1, 1)
         self.tabWidget.addTab(self.tabLog, _fromUtf8(""))
         self.gridLayout_4.addWidget(self.tabWidget, 3, 0, 1, 1)
+        self.cbDemoModus = QtGui.QCheckBox(self.centralwidget)
+        self.cbDemoModus.setObjectName(_fromUtf8("cbDemoModus"))
+        self.gridLayout_4.addWidget(self.cbDemoModus, 4, 0, 1, 1)
         CWBierzapfanlageGUI.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(CWBierzapfanlageGUI)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -247,4 +250,5 @@ class Ui_CWBierzapfanlageGUI(object):
         self.btnDeleteConfiguration.setText(_translate("CWBierzapfanlageGUI", "Delete", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabConfiguration), _translate("CWBierzapfanlageGUI", "Configuration", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLog), _translate("CWBierzapfanlageGUI", "Log", None))
+        self.cbDemoModus.setText(_translate("CWBierzapfanlageGUI", "Demo Modus", None))
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>685</height>
+    <width>730</width>
+    <height>729</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_4">
-    <item row="4" column="0">
+    <item row="5" column="0">
      <widget class="QPushButton" name="btnExit">
       <property name="text">
        <string>Exit</string>
@@ -346,9 +346,14 @@
       </widget>
      </widget>
     </item>
+    <item row="4" column="0">
+     <widget class="QCheckBox" name="cbDemoModus">
+      <property name="text">
+       <string>Demo Modus</string>
+      </property>
+     </widget>
+    </item>
    </layout>
-   <zorder>tabWidget</zorder>
-   <zorder>btnExit</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

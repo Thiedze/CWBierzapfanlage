@@ -79,10 +79,16 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 		
 		#Delete configuration
 		self.bierzapfanlageGUI.btnDeleteConfiguration.clicked.connect(self.deleteConfiguration)
+
+		#Demo Modus
+		self.bierzapfanlageGUI.cbDemoModus.stateChanged.connect(self.changeDemoModus)
 				
 	def ConnectSlots(self):
 		self.ConnectSettingSlots()
 		self.ConnectConfigurationSlots()
+
+	def changeDemoModus(self):
+		self.parameterHandler.demoModus = not self.parameterHandler.demoModus
 
 	#Slider auf den neuen Wert setzen
 	#Alle neuen Slider muessen hier hinzugefuegt werden

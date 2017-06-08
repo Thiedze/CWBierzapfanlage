@@ -22,7 +22,7 @@ class CWStartFill(CWState):
 			foundTopBorder = False
 			startFillCounter = 0
 			while True:
-				if self.parameterHandler.stopProgram == True:
+				if self.parameterHandler.stopProgram == True or self.parameterHandler.demoModus == True:
 					break
 				if foundTopBorder == False:
 					lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Horizontal)
