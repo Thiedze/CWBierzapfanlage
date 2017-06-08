@@ -19,3 +19,7 @@ YouTube
 ===================
 https://www.youtube.com/watch?v=nKC2dnGqSlA
 
+TouchScreen Treiber (Ubuntu)
+===================
+
+(1) eGTouch_v2.5.5814.L-x
