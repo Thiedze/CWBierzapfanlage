@@ -15,7 +15,7 @@ class CWStandBy(CWState):
 		try:
 			self.printName()
 			while self.serialHandler.handshake() == False:
-				if self.parameterHandler.stopProgram == True:
+				if self.parameterHandler.stopProgram == True or self.parameterHandler.resume == True:
 					break
 				continue
 		except:

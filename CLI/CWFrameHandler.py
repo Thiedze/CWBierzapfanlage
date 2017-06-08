@@ -114,7 +114,7 @@ class CWFrameHandler(object):
 			
 			# append right area horizontally to left
 			in_range_dst = numpy.concatenate((left_area, right_area), axis=1)
-			self.gui.setDebugFrame(in_range_dst)
+			#self.gui.setDebugFrame(in_range_dst)
 
 			contours, hierarchy = cv2.findContours(in_range_dst.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 

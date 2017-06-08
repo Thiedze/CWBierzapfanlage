@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'GUI/CWBierzapfanlage.ui'
+# Form implementation generated from reading ui file 'CWBierzapfanlage.ui'
 #
-# Created: Thu Jun  8 17:24:50 2017
+# Created: Thu Jun  8 20:04:18 2017
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,9 +36,6 @@ class Ui_CWBierzapfanlageGUI(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout_4 = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
-        self.btnExit = QtGui.QPushButton(self.centralwidget)
-        self.btnExit.setObjectName(_fromUtf8("btnExit"))
-        self.gridLayout_4.addWidget(self.btnExit, 5, 0, 1, 1)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(_fromUtf8("tabWidget"))
         self.tabSetting = QtGui.QWidget()
@@ -225,6 +222,15 @@ class Ui_CWBierzapfanlageGUI(object):
         self.cbDemoModus = QtGui.QCheckBox(self.centralwidget)
         self.cbDemoModus.setObjectName(_fromUtf8("cbDemoModus"))
         self.gridLayout_4.addWidget(self.cbDemoModus, 4, 0, 1, 1)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
+        self.btnExit = QtGui.QPushButton(self.centralwidget)
+        self.btnExit.setObjectName(_fromUtf8("btnExit"))
+        self.horizontalLayout.addWidget(self.btnExit)
+        self.btnResume = QtGui.QPushButton(self.centralwidget)
+        self.btnResume.setObjectName(_fromUtf8("btnResume"))
+        self.horizontalLayout.addWidget(self.btnResume)
+        self.gridLayout_4.addLayout(self.horizontalLayout, 5, 0, 1, 1)
         CWBierzapfanlageGUI.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(CWBierzapfanlageGUI)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -236,7 +242,6 @@ class Ui_CWBierzapfanlageGUI(object):
 
     def retranslateUi(self, CWBierzapfanlageGUI):
         CWBierzapfanlageGUI.setWindowTitle(_translate("CWBierzapfanlageGUI", "CWBierzapfanlage", None))
-        self.btnExit.setText(_translate("CWBierzapfanlageGUI", "Exit", None))
         self.lblDefineDetectionArea.setText(_translate("CWBierzapfanlageGUI", "Define left detection area:", None))
         self.lblLeftLeftBorder.setText(_translate("CWBierzapfanlageGUI", "Left border", None))
         self.lblLeftRightBorder.setText(_translate("CWBierzapfanlageGUI", "Right border", None))
@@ -250,5 +255,7 @@ class Ui_CWBierzapfanlageGUI(object):
         self.btnDeleteConfiguration.setText(_translate("CWBierzapfanlageGUI", "Delete", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabConfiguration), _translate("CWBierzapfanlageGUI", "Configuration", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLog), _translate("CWBierzapfanlageGUI", "Log", None))
-        self.cbDemoModus.setText(_translate("CWBierzapfanlageGUI", "Demo Modus", None))
+        self.cbDemoModus.setText(_translate("CWBierzapfanlageGUI", "Demo Mode", None))
+        self.btnExit.setText(_translate("CWBierzapfanlageGUI", "Exit", None))
+        self.btnResume.setText(_translate("CWBierzapfanlageGUI", "Resume", None))
 

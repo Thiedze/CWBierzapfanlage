@@ -42,3 +42,4 @@ class CWParameterHandler(object):
 		self.distance_top_to_bottom_line = 55
 		self.stopProgram = False
 		self.demoModus = False
+		self.resume = False

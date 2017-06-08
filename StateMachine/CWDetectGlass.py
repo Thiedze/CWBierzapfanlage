@@ -16,8 +16,7 @@ class CWDetectGlass(CWState):
 		try:
 			self.printName()
 			while True:
-				if self.parameterHandler.stopProgram == True:
-					print("exit")
+				if self.parameterHandler.stopProgram == True or self.parameterHandler.resume == True:
 					break
 				lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
 				

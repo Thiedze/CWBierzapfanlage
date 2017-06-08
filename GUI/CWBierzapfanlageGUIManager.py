@@ -82,10 +82,16 @@ class CWBierzapfanlageGUIManager(QtGui.QMainWindow):
 
 		#Demo Modus
 		self.bierzapfanlageGUI.cbDemoModus.stateChanged.connect(self.changeDemoModus)
+		
+		#Resume
+		self.bierzapfanlageGUI.btnResume.clicked.connect(self.resume)
 				
 	def ConnectSlots(self):
 		self.ConnectSettingSlots()
 		self.ConnectConfigurationSlots()
+
+	def resume(self):
+		self.parameterHandler.resume = True
 
 	def changeDemoModus(self):
 		self.parameterHandler.demoModus = not self.parameterHandler.demoModus

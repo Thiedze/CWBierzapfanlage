@@ -18,7 +18,7 @@ class CWStartRotate(CWState):
 			if self.ExceptionRaised == False:
 				self.SkipBorderCount = 0
 				while True:
-					if self.parameterHandler.stopProgram == True:
+					if self.parameterHandler.stopProgram == True or self.parameterHandler.resume == True:
 						break
 					lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
 				

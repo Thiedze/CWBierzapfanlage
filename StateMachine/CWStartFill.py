@@ -22,7 +22,7 @@ class CWStartFill(CWState):
 			foundTopBorder = False
 			startFillCounter = 0
 			while True:
-				if self.parameterHandler.stopProgram == True or self.parameterHandler.demoModus == True:
+				if self.parameterHandler.stopProgram == True or self.parameterHandler.demoModus == True or self.parameterHandler.resume == True:
 					break
 				if foundTopBorder == False:
 					lines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Horizontal)
@@ -31,7 +31,6 @@ class CWStartFill(CWState):
 					topBorder = self.frameHandler.getTopBorderFromGlass(lines)
 					if topBorder[1] != CWConstants.FRAME_HEIGHT:
 						foundTopBorder = True
-						print(topBorder)
 						verticalLines = self.frameHandler.getLinesFromNextFrame(LineOrientation.Vertical)
 						if self.frameHandler.getLeftBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_left_point or self.frameHandler.getRightBorderFromGlass(verticalLines)[0] == self.parameterHandler.middle_right_point:
 							break

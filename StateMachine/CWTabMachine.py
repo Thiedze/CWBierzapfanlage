@@ -70,6 +70,10 @@ class CWTabMachine(CWStateMachine):
 					self.frameHandler.release()
 					self.serialHandler.close()
 					break
+				
+				if self.parameterHandler.resume == True:
+					self.parameterHandler.resume = False
+					self.currentState = self.standBy
 			sys.exit(0)
 		except:
 			print (sys.exc_info())
